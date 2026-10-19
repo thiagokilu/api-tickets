@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  CUSTOMER
+  AGENT
+  ADMIN
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING_FOR_CUSTOMER
+  RESOLVED
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  username      String   @unique
+  email         String   @unique
+  password_hash String
+  role          Role     @default(CUSTOMER)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  requested_tickets Tickets[]       @relation("TicketRequester")
+  assigned_tickets  Tickets[]       @relation("TicketAssignee")
+  messages          TicketMessage[]
+  history_entries   TicketHistory[]
+}
+
+model Category {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  created_at  DateTime @default(now())
+
+  tickets Tickets[]
+}
+
+model Tickets {
+  id          Int            @id @default(autoincrement())
+  title       String
+  description String
+  status      TicketStatus   @default(OPEN)
+  priority    TicketPriority @default(MEDIUM)
+
+  requester_id   Int
+  assigned_to_id Int?
+  category_id    Int?
+
+  resolved_at DateTime?
+  closed_at   DateTime?
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+
+  requester User @relation("TicketRequester", fields: [requester_id], references: [id], onDelete: Restrict)
+
+  assigned_to User? @relation("TicketAssignee", fields: [assigned_to_id], references: [id], onDelete: SetNull)
+
+  category Category? @relation(fields: [category_id], references: [id], onDelete: SetNull)
+
+  messages TicketMessage[]
+  history  TicketHistory[]
+
+  @@index([requester_id])
+  @@index([assigned_to_id])
+  @@index([category_id])
+  @@index([status, created_at])
+}
+
+model TicketMessage {
+  id          Int      @id @default(autoincrement())
+  ticket_id   Int
+  author_id   Int
+  content     String
+  is_internal Boolean  @default(false)
+  created_at  DateTime @default(now())
+
+  ticket Tickets @relation(fields: [ticket_id], references: [id], onDelete: Cascade)
+
+  author User @relation(fields: [author_id], references: [id], onDelete: Restrict)
+
+  attachments TicketAttachment[]
+
+  @@index([ticket_id, created_at])
+}
+
+model TicketHistory {
+  id         Int      @id @default(autoincrement())
+  ticket_id  Int
+  actor_id   Int
+  field_name String
+  old_value  String?
+  new_value  String?
+  created_at DateTime @default(now())
+
+  ticket Tickets @relation(fields: [ticket_id], references: [id], onDelete: Cascade)
+
+  actor User @relation(fields: [actor_id], references: [id], onDelete: Restrict)
+
+  @@index([ticket_id, created_at])
+}
+
+model TicketAttachment {
+  id         Int      @id @default(autoincrement())
+  message_id Int
+  file_name  String
+  file_url   String
+  mime_type  String
+  file_size  BigInt
+  created_at DateTime @default(now())
+
+  message TicketMessage @relation(fields: [message_id], references: [id], onDelete: Cascade)
+}
