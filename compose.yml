@@ -3,7 +3,7 @@ services:
     image: postgres:18
     restart: unless-stopped
     ports:
-      - '${POSTGRES_PORT:-5432}:5432'
+      - '${POSTGRES_PORT:-5433}:5432'
     environment:
       POSTGRES_USER: ${POSTGRESQL_USERNAME:-api_tickets}
       POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD:-api_tickets}
@@ -22,7 +22,7 @@ services:
     image: redis:7
     restart: unless-stopped
     ports:
-      - '${REDIS_PORT:-6380}:6379'
+      - '${REDIS_PORT:-6381}:6379'
     volumes:
       - redis_data:/data
     healthcheck:

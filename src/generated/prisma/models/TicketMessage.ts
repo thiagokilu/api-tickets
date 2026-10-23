@@ -20,90 +20,66 @@ export type TicketMessageModel = runtime.Types.Result.DefaultSelection<Prisma.$T
 
 export type AggregateTicketMessage = {
   _count: TicketMessageCountAggregateOutputType | null
-  _avg: TicketMessageAvgAggregateOutputType | null
-  _sum: TicketMessageSumAggregateOutputType | null
   _min: TicketMessageMinAggregateOutputType | null
   _max: TicketMessageMaxAggregateOutputType | null
 }
 
-export type TicketMessageAvgAggregateOutputType = {
-  id: number | null
-  ticket_id: number | null
-  author_id: number | null
-}
-
-export type TicketMessageSumAggregateOutputType = {
-  id: number | null
-  ticket_id: number | null
-  author_id: number | null
-}
-
 export type TicketMessageMinAggregateOutputType = {
-  id: number | null
-  ticket_id: number | null
-  author_id: number | null
+  id: string | null
+  ticket_id: string | null
+  user_id: string | null
   content: string | null
-  is_internal: boolean | null
   created_at: Date | null
+  updated_at: Date | null
 }
 
 export type TicketMessageMaxAggregateOutputType = {
-  id: number | null
-  ticket_id: number | null
-  author_id: number | null
+  id: string | null
+  ticket_id: string | null
+  user_id: string | null
   content: string | null
-  is_internal: boolean | null
   created_at: Date | null
+  updated_at: Date | null
 }
 
 export type TicketMessageCountAggregateOutputType = {
   id: number
   ticket_id: number
-  author_id: number
+  user_id: number
   content: number
-  is_internal: number
+  attachments: number
   created_at: number
+  updated_at: number
   _all: number
 }
 
 
-export type TicketMessageAvgAggregateInputType = {
-  id?: true
-  ticket_id?: true
-  author_id?: true
-}
-
-export type TicketMessageSumAggregateInputType = {
-  id?: true
-  ticket_id?: true
-  author_id?: true
-}
-
 export type TicketMessageMinAggregateInputType = {
   id?: true
   ticket_id?: true
-  author_id?: true
+  user_id?: true
   content?: true
-  is_internal?: true
   created_at?: true
+  updated_at?: true
 }
 
 export type TicketMessageMaxAggregateInputType = {
   id?: true
   ticket_id?: true
-  author_id?: true
+  user_id?: true
   content?: true
-  is_internal?: true
   created_at?: true
+  updated_at?: true
 }
 
 export type TicketMessageCountAggregateInputType = {
   id?: true
   ticket_id?: true
-  author_id?: true
+  user_id?: true
   content?: true
-  is_internal?: true
+  attachments?: true
   created_at?: true
+  updated_at?: true
   _all?: true
 }
 
@@ -145,18 +121,6 @@ export type TicketMessageAggregateArgs<ExtArgs extends runtime.Types.Extensions.
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
-   * Select which fields to average
-  **/
-  _avg?: TicketMessageAvgAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
-   * Select which fields to sum
-  **/
-  _sum?: TicketMessageSumAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
    * Select which fields to find the minimum value
   **/
   _min?: TicketMessageMinAggregateInputType
@@ -187,22 +151,19 @@ export type TicketMessageGroupByArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   _count?: TicketMessageCountAggregateInputType | true
-  _avg?: TicketMessageAvgAggregateInputType
-  _sum?: TicketMessageSumAggregateInputType
   _min?: TicketMessageMinAggregateInputType
   _max?: TicketMessageMaxAggregateInputType
 }
 
 export type TicketMessageGroupByOutputType = {
-  id: number
-  ticket_id: number
-  author_id: number
+  id: string
+  ticket_id: string
+  user_id: string
   content: string
-  is_internal: boolean
+  attachments: string[]
   created_at: Date
+  updated_at: Date
   _count: TicketMessageCountAggregateOutputType | null
-  _avg: TicketMessageAvgAggregateOutputType | null
-  _sum: TicketMessageSumAggregateOutputType | null
   _min: TicketMessageMinAggregateOutputType | null
   _max: TicketMessageMaxAggregateOutputType | null
 }
@@ -226,130 +187,136 @@ export type TicketMessageWhereInput = {
   AND?: Prisma.TicketMessageWhereInput | Prisma.TicketMessageWhereInput[]
   OR?: Prisma.TicketMessageWhereInput[]
   NOT?: Prisma.TicketMessageWhereInput | Prisma.TicketMessageWhereInput[]
-  id?: Prisma.IntFilter<"TicketMessage"> | number
-  ticket_id?: Prisma.IntFilter<"TicketMessage"> | number
-  author_id?: Prisma.IntFilter<"TicketMessage"> | number
+  id?: Prisma.UuidFilter<"TicketMessage"> | string
+  ticket_id?: Prisma.UuidFilter<"TicketMessage"> | string
+  user_id?: Prisma.UuidFilter<"TicketMessage"> | string
   content?: Prisma.StringFilter<"TicketMessage"> | string
-  is_internal?: Prisma.BoolFilter<"TicketMessage"> | boolean
+  attachments?: Prisma.StringNullableListFilter<"TicketMessage">
   created_at?: Prisma.DateTimeFilter<"TicketMessage"> | Date | string
+  updated_at?: Prisma.DateTimeFilter<"TicketMessage"> | Date | string
   ticket?: Prisma.XOR<Prisma.TicketsScalarRelationFilter, Prisma.TicketsWhereInput>
-  author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  attachments?: Prisma.TicketAttachmentListRelationFilter
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type TicketMessageOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   ticket_id?: Prisma.SortOrder
-  author_id?: Prisma.SortOrder
+  user_id?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  is_internal?: Prisma.SortOrder
+  attachments?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
   ticket?: Prisma.TicketsOrderByWithRelationInput
-  author?: Prisma.UserOrderByWithRelationInput
-  attachments?: Prisma.TicketAttachmentOrderByRelationAggregateInput
+  user?: Prisma.UserOrderByWithRelationInput
 }
 
 export type TicketMessageWhereUniqueInput = Prisma.AtLeast<{
-  id?: number
+  id?: string
   AND?: Prisma.TicketMessageWhereInput | Prisma.TicketMessageWhereInput[]
   OR?: Prisma.TicketMessageWhereInput[]
   NOT?: Prisma.TicketMessageWhereInput | Prisma.TicketMessageWhereInput[]
-  ticket_id?: Prisma.IntFilter<"TicketMessage"> | number
-  author_id?: Prisma.IntFilter<"TicketMessage"> | number
+  ticket_id?: Prisma.UuidFilter<"TicketMessage"> | string
+  user_id?: Prisma.UuidFilter<"TicketMessage"> | string
   content?: Prisma.StringFilter<"TicketMessage"> | string
-  is_internal?: Prisma.BoolFilter<"TicketMessage"> | boolean
+  attachments?: Prisma.StringNullableListFilter<"TicketMessage">
   created_at?: Prisma.DateTimeFilter<"TicketMessage"> | Date | string
+  updated_at?: Prisma.DateTimeFilter<"TicketMessage"> | Date | string
   ticket?: Prisma.XOR<Prisma.TicketsScalarRelationFilter, Prisma.TicketsWhereInput>
-  author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  attachments?: Prisma.TicketAttachmentListRelationFilter
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id">
 
 export type TicketMessageOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   ticket_id?: Prisma.SortOrder
-  author_id?: Prisma.SortOrder
+  user_id?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  is_internal?: Prisma.SortOrder
+  attachments?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
   _count?: Prisma.TicketMessageCountOrderByAggregateInput
-  _avg?: Prisma.TicketMessageAvgOrderByAggregateInput
   _max?: Prisma.TicketMessageMaxOrderByAggregateInput
   _min?: Prisma.TicketMessageMinOrderByAggregateInput
-  _sum?: Prisma.TicketMessageSumOrderByAggregateInput
 }
 
 export type TicketMessageScalarWhereWithAggregatesInput = {
   AND?: Prisma.TicketMessageScalarWhereWithAggregatesInput | Prisma.TicketMessageScalarWhereWithAggregatesInput[]
   OR?: Prisma.TicketMessageScalarWhereWithAggregatesInput[]
   NOT?: Prisma.TicketMessageScalarWhereWithAggregatesInput | Prisma.TicketMessageScalarWhereWithAggregatesInput[]
-  id?: Prisma.IntWithAggregatesFilter<"TicketMessage"> | number
-  ticket_id?: Prisma.IntWithAggregatesFilter<"TicketMessage"> | number
-  author_id?: Prisma.IntWithAggregatesFilter<"TicketMessage"> | number
+  id?: Prisma.UuidWithAggregatesFilter<"TicketMessage"> | string
+  ticket_id?: Prisma.UuidWithAggregatesFilter<"TicketMessage"> | string
+  user_id?: Prisma.UuidWithAggregatesFilter<"TicketMessage"> | string
   content?: Prisma.StringWithAggregatesFilter<"TicketMessage"> | string
-  is_internal?: Prisma.BoolWithAggregatesFilter<"TicketMessage"> | boolean
+  attachments?: Prisma.StringNullableListFilter<"TicketMessage">
   created_at?: Prisma.DateTimeWithAggregatesFilter<"TicketMessage"> | Date | string
+  updated_at?: Prisma.DateTimeWithAggregatesFilter<"TicketMessage"> | Date | string
 }
 
 export type TicketMessageCreateInput = {
+  id?: string
   content: string
-  is_internal?: boolean
+  attachments?: Prisma.TicketMessageCreateattachmentsInput | string[]
   created_at?: Date | string
+  updated_at?: Date | string
   ticket: Prisma.TicketsCreateNestedOneWithoutMessagesInput
-  author: Prisma.UserCreateNestedOneWithoutMessagesInput
-  attachments?: Prisma.TicketAttachmentCreateNestedManyWithoutMessageInput
+  user: Prisma.UserCreateNestedOneWithoutMessagesInput
 }
 
 export type TicketMessageUncheckedCreateInput = {
-  id?: number
-  ticket_id: number
-  author_id: number
+  id?: string
+  ticket_id: string
+  user_id: string
   content: string
-  is_internal?: boolean
+  attachments?: Prisma.TicketMessageCreateattachmentsInput | string[]
   created_at?: Date | string
-  attachments?: Prisma.TicketAttachmentUncheckedCreateNestedManyWithoutMessageInput
+  updated_at?: Date | string
 }
 
 export type TicketMessageUpdateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  is_internal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  attachments?: Prisma.TicketMessageUpdateattachmentsInput | string[]
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ticket?: Prisma.TicketsUpdateOneRequiredWithoutMessagesNestedInput
-  author?: Prisma.UserUpdateOneRequiredWithoutMessagesNestedInput
-  attachments?: Prisma.TicketAttachmentUpdateManyWithoutMessageNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutMessagesNestedInput
 }
 
 export type TicketMessageUncheckedUpdateInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  ticket_id?: Prisma.IntFieldUpdateOperationsInput | number
-  author_id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  ticket_id?: Prisma.StringFieldUpdateOperationsInput | string
+  user_id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  is_internal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  attachments?: Prisma.TicketMessageUpdateattachmentsInput | string[]
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  attachments?: Prisma.TicketAttachmentUncheckedUpdateManyWithoutMessageNestedInput
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type TicketMessageCreateManyInput = {
-  id?: number
-  ticket_id: number
-  author_id: number
+  id?: string
+  ticket_id: string
+  user_id: string
   content: string
-  is_internal?: boolean
+  attachments?: Prisma.TicketMessageCreateattachmentsInput | string[]
   created_at?: Date | string
+  updated_at?: Date | string
 }
 
 export type TicketMessageUpdateManyMutationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  is_internal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  attachments?: Prisma.TicketMessageUpdateattachmentsInput | string[]
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type TicketMessageUncheckedUpdateManyInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  ticket_id?: Prisma.IntFieldUpdateOperationsInput | number
-  author_id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  ticket_id?: Prisma.StringFieldUpdateOperationsInput | string
+  user_id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  is_internal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  attachments?: Prisma.TicketMessageUpdateattachmentsInput | string[]
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type TicketMessageListRelationFilter = {
@@ -365,86 +332,70 @@ export type TicketMessageOrderByRelationAggregateInput = {
 export type TicketMessageCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   ticket_id?: Prisma.SortOrder
-  author_id?: Prisma.SortOrder
+  user_id?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  is_internal?: Prisma.SortOrder
+  attachments?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
-}
-
-export type TicketMessageAvgOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  ticket_id?: Prisma.SortOrder
-  author_id?: Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
 }
 
 export type TicketMessageMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   ticket_id?: Prisma.SortOrder
-  author_id?: Prisma.SortOrder
+  user_id?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  is_internal?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
 }
 
 export type TicketMessageMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   ticket_id?: Prisma.SortOrder
-  author_id?: Prisma.SortOrder
+  user_id?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  is_internal?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
 }
 
-export type TicketMessageSumOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  ticket_id?: Prisma.SortOrder
-  author_id?: Prisma.SortOrder
-}
-
-export type TicketMessageScalarRelationFilter = {
-  is?: Prisma.TicketMessageWhereInput
-  isNot?: Prisma.TicketMessageWhereInput
-}
-
-export type TicketMessageCreateNestedManyWithoutAuthorInput = {
-  create?: Prisma.XOR<Prisma.TicketMessageCreateWithoutAuthorInput, Prisma.TicketMessageUncheckedCreateWithoutAuthorInput> | Prisma.TicketMessageCreateWithoutAuthorInput[] | Prisma.TicketMessageUncheckedCreateWithoutAuthorInput[]
-  connectOrCreate?: Prisma.TicketMessageCreateOrConnectWithoutAuthorInput | Prisma.TicketMessageCreateOrConnectWithoutAuthorInput[]
-  createMany?: Prisma.TicketMessageCreateManyAuthorInputEnvelope
+export type TicketMessageCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.TicketMessageCreateWithoutUserInput, Prisma.TicketMessageUncheckedCreateWithoutUserInput> | Prisma.TicketMessageCreateWithoutUserInput[] | Prisma.TicketMessageUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.TicketMessageCreateOrConnectWithoutUserInput | Prisma.TicketMessageCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.TicketMessageCreateManyUserInputEnvelope
   connect?: Prisma.TicketMessageWhereUniqueInput | Prisma.TicketMessageWhereUniqueInput[]
 }
 
-export type TicketMessageUncheckedCreateNestedManyWithoutAuthorInput = {
-  create?: Prisma.XOR<Prisma.TicketMessageCreateWithoutAuthorInput, Prisma.TicketMessageUncheckedCreateWithoutAuthorInput> | Prisma.TicketMessageCreateWithoutAuthorInput[] | Prisma.TicketMessageUncheckedCreateWithoutAuthorInput[]
-  connectOrCreate?: Prisma.TicketMessageCreateOrConnectWithoutAuthorInput | Prisma.TicketMessageCreateOrConnectWithoutAuthorInput[]
-  createMany?: Prisma.TicketMessageCreateManyAuthorInputEnvelope
+export type TicketMessageUncheckedCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.TicketMessageCreateWithoutUserInput, Prisma.TicketMessageUncheckedCreateWithoutUserInput> | Prisma.TicketMessageCreateWithoutUserInput[] | Prisma.TicketMessageUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.TicketMessageCreateOrConnectWithoutUserInput | Prisma.TicketMessageCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.TicketMessageCreateManyUserInputEnvelope
   connect?: Prisma.TicketMessageWhereUniqueInput | Prisma.TicketMessageWhereUniqueInput[]
 }
 
-export type TicketMessageUpdateManyWithoutAuthorNestedInput = {
-  create?: Prisma.XOR<Prisma.TicketMessageCreateWithoutAuthorInput, Prisma.TicketMessageUncheckedCreateWithoutAuthorInput> | Prisma.TicketMessageCreateWithoutAuthorInput[] | Prisma.TicketMessageUncheckedCreateWithoutAuthorInput[]
-  connectOrCreate?: Prisma.TicketMessageCreateOrConnectWithoutAuthorInput | Prisma.TicketMessageCreateOrConnectWithoutAuthorInput[]
-  upsert?: Prisma.TicketMessageUpsertWithWhereUniqueWithoutAuthorInput | Prisma.TicketMessageUpsertWithWhereUniqueWithoutAuthorInput[]
-  createMany?: Prisma.TicketMessageCreateManyAuthorInputEnvelope
+export type TicketMessageUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.TicketMessageCreateWithoutUserInput, Prisma.TicketMessageUncheckedCreateWithoutUserInput> | Prisma.TicketMessageCreateWithoutUserInput[] | Prisma.TicketMessageUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.TicketMessageCreateOrConnectWithoutUserInput | Prisma.TicketMessageCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.TicketMessageUpsertWithWhereUniqueWithoutUserInput | Prisma.TicketMessageUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.TicketMessageCreateManyUserInputEnvelope
   set?: Prisma.TicketMessageWhereUniqueInput | Prisma.TicketMessageWhereUniqueInput[]
   disconnect?: Prisma.TicketMessageWhereUniqueInput | Prisma.TicketMessageWhereUniqueInput[]
   delete?: Prisma.TicketMessageWhereUniqueInput | Prisma.TicketMessageWhereUniqueInput[]
   connect?: Prisma.TicketMessageWhereUniqueInput | Prisma.TicketMessageWhereUniqueInput[]
-  update?: Prisma.TicketMessageUpdateWithWhereUniqueWithoutAuthorInput | Prisma.TicketMessageUpdateWithWhereUniqueWithoutAuthorInput[]
-  updateMany?: Prisma.TicketMessageUpdateManyWithWhereWithoutAuthorInput | Prisma.TicketMessageUpdateManyWithWhereWithoutAuthorInput[]
+  update?: Prisma.TicketMessageUpdateWithWhereUniqueWithoutUserInput | Prisma.TicketMessageUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.TicketMessageUpdateManyWithWhereWithoutUserInput | Prisma.TicketMessageUpdateManyWithWhereWithoutUserInput[]
   deleteMany?: Prisma.TicketMessageScalarWhereInput | Prisma.TicketMessageScalarWhereInput[]
 }
 
-export type TicketMessageUncheckedUpdateManyWithoutAuthorNestedInput = {
-  create?: Prisma.XOR<Prisma.TicketMessageCreateWithoutAuthorInput, Prisma.TicketMessageUncheckedCreateWithoutAuthorInput> | Prisma.TicketMessageCreateWithoutAuthorInput[] | Prisma.TicketMessageUncheckedCreateWithoutAuthorInput[]
-  connectOrCreate?: Prisma.TicketMessageCreateOrConnectWithoutAuthorInput | Prisma.TicketMessageCreateOrConnectWithoutAuthorInput[]
-  upsert?: Prisma.TicketMessageUpsertWithWhereUniqueWithoutAuthorInput | Prisma.TicketMessageUpsertWithWhereUniqueWithoutAuthorInput[]
-  createMany?: Prisma.TicketMessageCreateManyAuthorInputEnvelope
+export type TicketMessageUncheckedUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.TicketMessageCreateWithoutUserInput, Prisma.TicketMessageUncheckedCreateWithoutUserInput> | Prisma.TicketMessageCreateWithoutUserInput[] | Prisma.TicketMessageUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.TicketMessageCreateOrConnectWithoutUserInput | Prisma.TicketMessageCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.TicketMessageUpsertWithWhereUniqueWithoutUserInput | Prisma.TicketMessageUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.TicketMessageCreateManyUserInputEnvelope
   set?: Prisma.TicketMessageWhereUniqueInput | Prisma.TicketMessageWhereUniqueInput[]
   disconnect?: Prisma.TicketMessageWhereUniqueInput | Prisma.TicketMessageWhereUniqueInput[]
   delete?: Prisma.TicketMessageWhereUniqueInput | Prisma.TicketMessageWhereUniqueInput[]
   connect?: Prisma.TicketMessageWhereUniqueInput | Prisma.TicketMessageWhereUniqueInput[]
-  update?: Prisma.TicketMessageUpdateWithWhereUniqueWithoutAuthorInput | Prisma.TicketMessageUpdateWithWhereUniqueWithoutAuthorInput[]
-  updateMany?: Prisma.TicketMessageUpdateManyWithWhereWithoutAuthorInput | Prisma.TicketMessageUpdateManyWithWhereWithoutAuthorInput[]
+  update?: Prisma.TicketMessageUpdateWithWhereUniqueWithoutUserInput | Prisma.TicketMessageUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.TicketMessageUpdateManyWithWhereWithoutUserInput | Prisma.TicketMessageUpdateManyWithWhereWithoutUserInput[]
   deleteMany?: Prisma.TicketMessageScalarWhereInput | Prisma.TicketMessageScalarWhereInput[]
 }
 
@@ -490,90 +441,88 @@ export type TicketMessageUncheckedUpdateManyWithoutTicketNestedInput = {
   deleteMany?: Prisma.TicketMessageScalarWhereInput | Prisma.TicketMessageScalarWhereInput[]
 }
 
-export type TicketMessageCreateNestedOneWithoutAttachmentsInput = {
-  create?: Prisma.XOR<Prisma.TicketMessageCreateWithoutAttachmentsInput, Prisma.TicketMessageUncheckedCreateWithoutAttachmentsInput>
-  connectOrCreate?: Prisma.TicketMessageCreateOrConnectWithoutAttachmentsInput
-  connect?: Prisma.TicketMessageWhereUniqueInput
+export type TicketMessageCreateattachmentsInput = {
+  set: string[]
 }
 
-export type TicketMessageUpdateOneRequiredWithoutAttachmentsNestedInput = {
-  create?: Prisma.XOR<Prisma.TicketMessageCreateWithoutAttachmentsInput, Prisma.TicketMessageUncheckedCreateWithoutAttachmentsInput>
-  connectOrCreate?: Prisma.TicketMessageCreateOrConnectWithoutAttachmentsInput
-  upsert?: Prisma.TicketMessageUpsertWithoutAttachmentsInput
-  connect?: Prisma.TicketMessageWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.TicketMessageUpdateToOneWithWhereWithoutAttachmentsInput, Prisma.TicketMessageUpdateWithoutAttachmentsInput>, Prisma.TicketMessageUncheckedUpdateWithoutAttachmentsInput>
+export type TicketMessageUpdateattachmentsInput = {
+  set?: string[]
+  push?: string | string[]
 }
 
-export type TicketMessageCreateWithoutAuthorInput = {
+export type TicketMessageCreateWithoutUserInput = {
+  id?: string
   content: string
-  is_internal?: boolean
+  attachments?: Prisma.TicketMessageCreateattachmentsInput | string[]
   created_at?: Date | string
+  updated_at?: Date | string
   ticket: Prisma.TicketsCreateNestedOneWithoutMessagesInput
-  attachments?: Prisma.TicketAttachmentCreateNestedManyWithoutMessageInput
 }
 
-export type TicketMessageUncheckedCreateWithoutAuthorInput = {
-  id?: number
-  ticket_id: number
+export type TicketMessageUncheckedCreateWithoutUserInput = {
+  id?: string
+  ticket_id: string
   content: string
-  is_internal?: boolean
+  attachments?: Prisma.TicketMessageCreateattachmentsInput | string[]
   created_at?: Date | string
-  attachments?: Prisma.TicketAttachmentUncheckedCreateNestedManyWithoutMessageInput
+  updated_at?: Date | string
 }
 
-export type TicketMessageCreateOrConnectWithoutAuthorInput = {
+export type TicketMessageCreateOrConnectWithoutUserInput = {
   where: Prisma.TicketMessageWhereUniqueInput
-  create: Prisma.XOR<Prisma.TicketMessageCreateWithoutAuthorInput, Prisma.TicketMessageUncheckedCreateWithoutAuthorInput>
+  create: Prisma.XOR<Prisma.TicketMessageCreateWithoutUserInput, Prisma.TicketMessageUncheckedCreateWithoutUserInput>
 }
 
-export type TicketMessageCreateManyAuthorInputEnvelope = {
-  data: Prisma.TicketMessageCreateManyAuthorInput | Prisma.TicketMessageCreateManyAuthorInput[]
+export type TicketMessageCreateManyUserInputEnvelope = {
+  data: Prisma.TicketMessageCreateManyUserInput | Prisma.TicketMessageCreateManyUserInput[]
   skipDuplicates?: boolean
 }
 
-export type TicketMessageUpsertWithWhereUniqueWithoutAuthorInput = {
+export type TicketMessageUpsertWithWhereUniqueWithoutUserInput = {
   where: Prisma.TicketMessageWhereUniqueInput
-  update: Prisma.XOR<Prisma.TicketMessageUpdateWithoutAuthorInput, Prisma.TicketMessageUncheckedUpdateWithoutAuthorInput>
-  create: Prisma.XOR<Prisma.TicketMessageCreateWithoutAuthorInput, Prisma.TicketMessageUncheckedCreateWithoutAuthorInput>
+  update: Prisma.XOR<Prisma.TicketMessageUpdateWithoutUserInput, Prisma.TicketMessageUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.TicketMessageCreateWithoutUserInput, Prisma.TicketMessageUncheckedCreateWithoutUserInput>
 }
 
-export type TicketMessageUpdateWithWhereUniqueWithoutAuthorInput = {
+export type TicketMessageUpdateWithWhereUniqueWithoutUserInput = {
   where: Prisma.TicketMessageWhereUniqueInput
-  data: Prisma.XOR<Prisma.TicketMessageUpdateWithoutAuthorInput, Prisma.TicketMessageUncheckedUpdateWithoutAuthorInput>
+  data: Prisma.XOR<Prisma.TicketMessageUpdateWithoutUserInput, Prisma.TicketMessageUncheckedUpdateWithoutUserInput>
 }
 
-export type TicketMessageUpdateManyWithWhereWithoutAuthorInput = {
+export type TicketMessageUpdateManyWithWhereWithoutUserInput = {
   where: Prisma.TicketMessageScalarWhereInput
-  data: Prisma.XOR<Prisma.TicketMessageUpdateManyMutationInput, Prisma.TicketMessageUncheckedUpdateManyWithoutAuthorInput>
+  data: Prisma.XOR<Prisma.TicketMessageUpdateManyMutationInput, Prisma.TicketMessageUncheckedUpdateManyWithoutUserInput>
 }
 
 export type TicketMessageScalarWhereInput = {
   AND?: Prisma.TicketMessageScalarWhereInput | Prisma.TicketMessageScalarWhereInput[]
   OR?: Prisma.TicketMessageScalarWhereInput[]
   NOT?: Prisma.TicketMessageScalarWhereInput | Prisma.TicketMessageScalarWhereInput[]
-  id?: Prisma.IntFilter<"TicketMessage"> | number
-  ticket_id?: Prisma.IntFilter<"TicketMessage"> | number
-  author_id?: Prisma.IntFilter<"TicketMessage"> | number
+  id?: Prisma.UuidFilter<"TicketMessage"> | string
+  ticket_id?: Prisma.UuidFilter<"TicketMessage"> | string
+  user_id?: Prisma.UuidFilter<"TicketMessage"> | string
   content?: Prisma.StringFilter<"TicketMessage"> | string
-  is_internal?: Prisma.BoolFilter<"TicketMessage"> | boolean
+  attachments?: Prisma.StringNullableListFilter<"TicketMessage">
   created_at?: Prisma.DateTimeFilter<"TicketMessage"> | Date | string
+  updated_at?: Prisma.DateTimeFilter<"TicketMessage"> | Date | string
 }
 
 export type TicketMessageCreateWithoutTicketInput = {
+  id?: string
   content: string
-  is_internal?: boolean
+  attachments?: Prisma.TicketMessageCreateattachmentsInput | string[]
   created_at?: Date | string
-  author: Prisma.UserCreateNestedOneWithoutMessagesInput
-  attachments?: Prisma.TicketAttachmentCreateNestedManyWithoutMessageInput
+  updated_at?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutMessagesInput
 }
 
 export type TicketMessageUncheckedCreateWithoutTicketInput = {
-  id?: number
-  author_id: number
+  id?: string
+  user_id: string
   content: string
-  is_internal?: boolean
+  attachments?: Prisma.TicketMessageCreateattachmentsInput | string[]
   created_at?: Date | string
-  attachments?: Prisma.TicketAttachmentUncheckedCreateNestedManyWithoutMessageInput
+  updated_at?: Date | string
 }
 
 export type TicketMessageCreateOrConnectWithoutTicketInput = {
@@ -602,227 +551,154 @@ export type TicketMessageUpdateManyWithWhereWithoutTicketInput = {
   data: Prisma.XOR<Prisma.TicketMessageUpdateManyMutationInput, Prisma.TicketMessageUncheckedUpdateManyWithoutTicketInput>
 }
 
-export type TicketMessageCreateWithoutAttachmentsInput = {
+export type TicketMessageCreateManyUserInput = {
+  id?: string
+  ticket_id: string
   content: string
-  is_internal?: boolean
+  attachments?: Prisma.TicketMessageCreateattachmentsInput | string[]
   created_at?: Date | string
-  ticket: Prisma.TicketsCreateNestedOneWithoutMessagesInput
-  author: Prisma.UserCreateNestedOneWithoutMessagesInput
+  updated_at?: Date | string
 }
 
-export type TicketMessageUncheckedCreateWithoutAttachmentsInput = {
-  id?: number
-  ticket_id: number
-  author_id: number
-  content: string
-  is_internal?: boolean
-  created_at?: Date | string
-}
-
-export type TicketMessageCreateOrConnectWithoutAttachmentsInput = {
-  where: Prisma.TicketMessageWhereUniqueInput
-  create: Prisma.XOR<Prisma.TicketMessageCreateWithoutAttachmentsInput, Prisma.TicketMessageUncheckedCreateWithoutAttachmentsInput>
-}
-
-export type TicketMessageUpsertWithoutAttachmentsInput = {
-  update: Prisma.XOR<Prisma.TicketMessageUpdateWithoutAttachmentsInput, Prisma.TicketMessageUncheckedUpdateWithoutAttachmentsInput>
-  create: Prisma.XOR<Prisma.TicketMessageCreateWithoutAttachmentsInput, Prisma.TicketMessageUncheckedCreateWithoutAttachmentsInput>
-  where?: Prisma.TicketMessageWhereInput
-}
-
-export type TicketMessageUpdateToOneWithWhereWithoutAttachmentsInput = {
-  where?: Prisma.TicketMessageWhereInput
-  data: Prisma.XOR<Prisma.TicketMessageUpdateWithoutAttachmentsInput, Prisma.TicketMessageUncheckedUpdateWithoutAttachmentsInput>
-}
-
-export type TicketMessageUpdateWithoutAttachmentsInput = {
+export type TicketMessageUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  is_internal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  attachments?: Prisma.TicketMessageUpdateattachmentsInput | string[]
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ticket?: Prisma.TicketsUpdateOneRequiredWithoutMessagesNestedInput
-  author?: Prisma.UserUpdateOneRequiredWithoutMessagesNestedInput
 }
 
-export type TicketMessageUncheckedUpdateWithoutAttachmentsInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  ticket_id?: Prisma.IntFieldUpdateOperationsInput | number
-  author_id?: Prisma.IntFieldUpdateOperationsInput | number
+export type TicketMessageUncheckedUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  ticket_id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  is_internal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  attachments?: Prisma.TicketMessageUpdateattachmentsInput | string[]
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type TicketMessageCreateManyAuthorInput = {
-  id?: number
-  ticket_id: number
-  content: string
-  is_internal?: boolean
-  created_at?: Date | string
-}
-
-export type TicketMessageUpdateWithoutAuthorInput = {
+export type TicketMessageUncheckedUpdateManyWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  ticket_id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  is_internal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  attachments?: Prisma.TicketMessageUpdateattachmentsInput | string[]
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ticket?: Prisma.TicketsUpdateOneRequiredWithoutMessagesNestedInput
-  attachments?: Prisma.TicketAttachmentUpdateManyWithoutMessageNestedInput
-}
-
-export type TicketMessageUncheckedUpdateWithoutAuthorInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  ticket_id?: Prisma.IntFieldUpdateOperationsInput | number
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  is_internal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  attachments?: Prisma.TicketAttachmentUncheckedUpdateManyWithoutMessageNestedInput
-}
-
-export type TicketMessageUncheckedUpdateManyWithoutAuthorInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  ticket_id?: Prisma.IntFieldUpdateOperationsInput | number
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  is_internal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type TicketMessageCreateManyTicketInput = {
-  id?: number
-  author_id: number
+  id?: string
+  user_id: string
   content: string
-  is_internal?: boolean
+  attachments?: Prisma.TicketMessageCreateattachmentsInput | string[]
   created_at?: Date | string
+  updated_at?: Date | string
 }
 
 export type TicketMessageUpdateWithoutTicketInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  is_internal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  attachments?: Prisma.TicketMessageUpdateattachmentsInput | string[]
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  author?: Prisma.UserUpdateOneRequiredWithoutMessagesNestedInput
-  attachments?: Prisma.TicketAttachmentUpdateManyWithoutMessageNestedInput
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutMessagesNestedInput
 }
 
 export type TicketMessageUncheckedUpdateWithoutTicketInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  author_id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  user_id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  is_internal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  attachments?: Prisma.TicketMessageUpdateattachmentsInput | string[]
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  attachments?: Prisma.TicketAttachmentUncheckedUpdateManyWithoutMessageNestedInput
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type TicketMessageUncheckedUpdateManyWithoutTicketInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  author_id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  user_id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  is_internal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  attachments?: Prisma.TicketMessageUpdateattachmentsInput | string[]
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-
-/**
- * Count Type TicketMessageCountOutputType
- */
-
-export type TicketMessageCountOutputType = {
-  attachments: number
-}
-
-export type TicketMessageCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  attachments?: boolean | TicketMessageCountOutputTypeCountAttachmentsArgs
-}
-
-/**
- * TicketMessageCountOutputType without action
- */
-export type TicketMessageCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the TicketMessageCountOutputType
-   */
-  select?: Prisma.TicketMessageCountOutputTypeSelect<ExtArgs> | null
-}
-
-/**
- * TicketMessageCountOutputType without action
- */
-export type TicketMessageCountOutputTypeCountAttachmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.TicketAttachmentWhereInput
-}
 
 
 export type TicketMessageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   ticket_id?: boolean
-  author_id?: boolean
+  user_id?: boolean
   content?: boolean
-  is_internal?: boolean
+  attachments?: boolean
   created_at?: boolean
+  updated_at?: boolean
   ticket?: boolean | Prisma.TicketsDefaultArgs<ExtArgs>
-  author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  attachments?: boolean | Prisma.TicketMessage$attachmentsArgs<ExtArgs>
-  _count?: boolean | Prisma.TicketMessageCountOutputTypeDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["ticketMessage"]>
 
 export type TicketMessageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   ticket_id?: boolean
-  author_id?: boolean
+  user_id?: boolean
   content?: boolean
-  is_internal?: boolean
+  attachments?: boolean
   created_at?: boolean
+  updated_at?: boolean
   ticket?: boolean | Prisma.TicketsDefaultArgs<ExtArgs>
-  author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["ticketMessage"]>
 
 export type TicketMessageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   ticket_id?: boolean
-  author_id?: boolean
+  user_id?: boolean
   content?: boolean
-  is_internal?: boolean
+  attachments?: boolean
   created_at?: boolean
+  updated_at?: boolean
   ticket?: boolean | Prisma.TicketsDefaultArgs<ExtArgs>
-  author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["ticketMessage"]>
 
 export type TicketMessageSelectScalar = {
   id?: boolean
   ticket_id?: boolean
-  author_id?: boolean
+  user_id?: boolean
   content?: boolean
-  is_internal?: boolean
+  attachments?: boolean
   created_at?: boolean
+  updated_at?: boolean
 }
 
-export type TicketMessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ticket_id" | "author_id" | "content" | "is_internal" | "created_at", ExtArgs["result"]["ticketMessage"]>
+export type TicketMessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ticket_id" | "user_id" | "content" | "attachments" | "created_at" | "updated_at", ExtArgs["result"]["ticketMessage"]>
 export type TicketMessageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   ticket?: boolean | Prisma.TicketsDefaultArgs<ExtArgs>
-  author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  attachments?: boolean | Prisma.TicketMessage$attachmentsArgs<ExtArgs>
-  _count?: boolean | Prisma.TicketMessageCountOutputTypeDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type TicketMessageIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   ticket?: boolean | Prisma.TicketsDefaultArgs<ExtArgs>
-  author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type TicketMessageIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   ticket?: boolean | Prisma.TicketsDefaultArgs<ExtArgs>
-  author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
 export type $TicketMessagePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "TicketMessage"
   objects: {
     ticket: Prisma.$TicketsPayload<ExtArgs>
-    author: Prisma.$UserPayload<ExtArgs>
-    attachments: Prisma.$TicketAttachmentPayload<ExtArgs>[]
+    user: Prisma.$UserPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: number
-    ticket_id: number
-    author_id: number
+    id: string
+    ticket_id: string
+    user_id: string
     content: string
-    is_internal: boolean
+    attachments: string[]
     created_at: Date
+    updated_at: Date
   }, ExtArgs["result"]["ticketMessage"]>
   composites: {}
 }
@@ -1218,8 +1094,7 @@ readonly fields: TicketMessageFieldRefs;
 export interface Prisma__TicketMessageClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   ticket<T extends Prisma.TicketsDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TicketsDefaultArgs<ExtArgs>>): Prisma.Prisma__TicketsClient<runtime.Types.Result.GetResult<Prisma.$TicketsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  author<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  attachments<T extends Prisma.TicketMessage$attachmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TicketMessage$attachmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TicketAttachmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1249,12 +1124,13 @@ export interface Prisma__TicketMessageClient<T, Null = never, ExtArgs extends ru
  * Fields of the TicketMessage model
  */
 export interface TicketMessageFieldRefs {
-  readonly id: Prisma.FieldRef<"TicketMessage", 'Int'>
-  readonly ticket_id: Prisma.FieldRef<"TicketMessage", 'Int'>
-  readonly author_id: Prisma.FieldRef<"TicketMessage", 'Int'>
+  readonly id: Prisma.FieldRef<"TicketMessage", 'String'>
+  readonly ticket_id: Prisma.FieldRef<"TicketMessage", 'String'>
+  readonly user_id: Prisma.FieldRef<"TicketMessage", 'String'>
   readonly content: Prisma.FieldRef<"TicketMessage", 'String'>
-  readonly is_internal: Prisma.FieldRef<"TicketMessage", 'Boolean'>
+  readonly attachments: Prisma.FieldRef<"TicketMessage", 'String[]'>
   readonly created_at: Prisma.FieldRef<"TicketMessage", 'DateTime'>
+  readonly updated_at: Prisma.FieldRef<"TicketMessage", 'DateTime'>
 }
     
 
@@ -1653,30 +1529,6 @@ export type TicketMessageDeleteManyArgs<ExtArgs extends runtime.Types.Extensions
    * Limit how many TicketMessages to delete.
    */
   limit?: number
-}
-
-/**
- * TicketMessage.attachments
- */
-export type TicketMessage$attachmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the TicketAttachment
-   */
-  select?: Prisma.TicketAttachmentSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the TicketAttachment
-   */
-  omit?: Prisma.TicketAttachmentOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.TicketAttachmentInclude<ExtArgs> | null
-  where?: Prisma.TicketAttachmentWhereInput
-  orderBy?: Prisma.TicketAttachmentOrderByWithRelationInput | Prisma.TicketAttachmentOrderByWithRelationInput[]
-  cursor?: Prisma.TicketAttachmentWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.TicketAttachmentScalarFieldEnum | Prisma.TicketAttachmentScalarFieldEnum[]
 }
 
 /**

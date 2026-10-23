@@ -32,7 +32,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       where: { id: payload.userId },
     });
 
-    if (!user) {
+    if (!user || !user.is_active) {
       throw new UnauthorizedException();
     }
 
@@ -46,6 +46,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException('Token invalid or expired');
     }
 
-    return { userId: payload.userId, email: payload.email };
+    return { userId: payload.userId, email: payload.email, role: user.role };
   }
 }

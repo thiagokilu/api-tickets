@@ -54,9 +54,8 @@ export const ModelName = {
   User: 'User',
   Category: 'Category',
   Tickets: 'Tickets',
-  TicketMessage: 'TicketMessage',
   TicketHistory: 'TicketHistory',
-  TicketAttachment: 'TicketAttachment'
+  TicketMessage: 'TicketMessage'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -108,6 +107,7 @@ export const TicketsScalarFieldEnum = {
   requester_id: 'requester_id',
   assigned_to_id: 'assigned_to_id',
   category_id: 'category_id',
+  client_files: 'client_files',
   resolved_at: 'resolved_at',
   closed_at: 'closed_at',
   created_at: 'created_at',
@@ -115,18 +115,6 @@ export const TicketsScalarFieldEnum = {
 } as const
 
 export type TicketsScalarFieldEnum = (typeof TicketsScalarFieldEnum)[keyof typeof TicketsScalarFieldEnum]
-
-
-export const TicketMessageScalarFieldEnum = {
-  id: 'id',
-  ticket_id: 'ticket_id',
-  author_id: 'author_id',
-  content: 'content',
-  is_internal: 'is_internal',
-  created_at: 'created_at'
-} as const
-
-export type TicketMessageScalarFieldEnum = (typeof TicketMessageScalarFieldEnum)[keyof typeof TicketMessageScalarFieldEnum]
 
 
 export const TicketHistoryScalarFieldEnum = {
@@ -142,17 +130,17 @@ export const TicketHistoryScalarFieldEnum = {
 export type TicketHistoryScalarFieldEnum = (typeof TicketHistoryScalarFieldEnum)[keyof typeof TicketHistoryScalarFieldEnum]
 
 
-export const TicketAttachmentScalarFieldEnum = {
+export const TicketMessageScalarFieldEnum = {
   id: 'id',
-  message_id: 'message_id',
-  file_name: 'file_name',
-  file_url: 'file_url',
-  mime_type: 'mime_type',
-  file_size: 'file_size',
-  created_at: 'created_at'
+  ticket_id: 'ticket_id',
+  user_id: 'user_id',
+  content: 'content',
+  attachments: 'attachments',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
 } as const
 
-export type TicketAttachmentScalarFieldEnum = (typeof TicketAttachmentScalarFieldEnum)[keyof typeof TicketAttachmentScalarFieldEnum]
+export type TicketMessageScalarFieldEnum = (typeof TicketMessageScalarFieldEnum)[keyof typeof TicketMessageScalarFieldEnum]
 
 
 export const SortOrder = {

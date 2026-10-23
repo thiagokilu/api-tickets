@@ -57,17 +57,12 @@ export type Category = Prisma.CategoryModel
  */
 export type Tickets = Prisma.TicketsModel
 /**
- * Model TicketMessage
- * 
- */
-export type TicketMessage = Prisma.TicketMessageModel
-/**
  * Model TicketHistory
  * 
  */
 export type TicketHistory = Prisma.TicketHistoryModel
 /**
- * Model TicketAttachment
+ * Model TicketMessage
  * 
  */
-export type TicketAttachment = Prisma.TicketAttachmentModel
+export type TicketMessage = Prisma.TicketMessageModel

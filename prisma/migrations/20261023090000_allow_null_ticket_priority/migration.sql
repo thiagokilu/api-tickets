@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Tickets" ALTER COLUMN "priority" DROP DEFAULT,
+ALTER COLUMN "priority" DROP NOT NULL;

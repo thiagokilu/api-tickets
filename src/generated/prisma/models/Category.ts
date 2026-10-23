@@ -340,6 +340,14 @@ export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
 }
 
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type CategoryCreateNestedOneWithoutTicketsInput = {
   create?: Prisma.XOR<Prisma.CategoryCreateWithoutTicketsInput, Prisma.CategoryUncheckedCreateWithoutTicketsInput>
   connectOrCreate?: Prisma.CategoryCreateOrConnectWithoutTicketsInput

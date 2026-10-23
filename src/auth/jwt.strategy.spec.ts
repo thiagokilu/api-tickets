@@ -84,6 +84,7 @@ describe('JwtStrategy', () => {
       mockPrismaService.user.findUnique.mockResolvedValue({
         id: 1,
         email: 'test@test.com',
+        is_active: true,
       });
       mockRedisService.client.get.mockResolvedValue('valid-token');
 

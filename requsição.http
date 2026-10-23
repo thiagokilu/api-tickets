@@ -1,0 +1,55 @@
+@baseUrl = http://localhost:3000
+@email = test@example.com
+@password = password123
+
+### Verificar API
+GET {{baseUrl}}/
+
+### Criar usuário
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+> {% client.global.set("token", response.body.access_token); %}
+
+### Fazer login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+> {% client.global.set("token", response.body.access_token); %}
+
+### Criar ticket
+POST {{baseUrl}}/tickets
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Problema no sistema",
+  "description": "Não consigo acessar uma funcionalidade."
+}
+
+### Atualizar ticket
+PATCH {{baseUrl}}/tickets/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Problema no sistema atualizado",
+  "description": "A funcionalidade continua indisponível.",
+  "status": "IN_PROGRESS",
+  "priority": "HIGH"
+}
+
+### Deletar ticket
+DELETE {{baseUrl}}/tickets/1
+Authorization: Bearer {{token}}

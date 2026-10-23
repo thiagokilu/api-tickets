@@ -11,7 +11,6 @@
 export type * from './models/User.js'
 export type * from './models/Category.js'
 export type * from './models/Tickets.js'
-export type * from './models/TicketMessage.js'
 export type * from './models/TicketHistory.js'
-export type * from './models/TicketAttachment.js'
+export type * from './models/TicketMessage.js'
 export type * from './commonInputTypes.js'

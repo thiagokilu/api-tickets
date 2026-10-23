@@ -14,6 +14,8 @@ describe('AuthController', () => {
     login: vi.fn(),
     logout: vi.fn(),
     renewToken: vi.fn(),
+    inviteEmployee: vi.fn(),
+    completeEmployee: vi.fn(),
   };
 
   beforeEach(async () => {
@@ -94,6 +96,40 @@ describe('AuthController', () => {
 
     expect(authService.logout).toHaveBeenCalledWith(1);
     expect(result).toEqual({ message: 'Logout successful' });
+  });
+
+  it('should be able to invite an employee', async () => {
+    const inviteDto = { email: 'agent@test.com' };
+
+    mockAuthService.inviteEmployee.mockResolvedValue({
+      email: 'agent@test.com',
+      invite_token: 'invite-token',
+    });
+
+    const result = await controller.inviteEmployee(inviteDto);
+
+    expect(authService.inviteEmployee).toHaveBeenCalledWith(inviteDto);
+    expect(result).toEqual({
+      email: 'agent@test.com',
+      invite_token: 'invite-token',
+    });
+  });
+
+  it('should be able to complete employee registration', async () => {
+    const completeDto = {
+      token: 'invite-token',
+      username: 'agent',
+      password: 'password123',
+    };
+
+    mockAuthService.completeEmployee.mockResolvedValue({
+      access_token: 'mock-token',
+    });
+
+    const result = await controller.completeEmployee(completeDto);
+
+    expect(authService.completeEmployee).toHaveBeenCalledWith(completeDto);
+    expect(result).toEqual({ access_token: 'mock-token' });
   });
 
   it('should be able to renew token', async () => {
