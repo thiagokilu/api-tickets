@@ -1,41 +1,114 @@
-[ ] RF01 — Criar ticket: o usuário deve poder criar um ticket informando título, descrição, prioridade e categoria.
+# 🎫 API Tickets
 
-[ ] RF02 — Excluir ticket: o usuário deve poder excluir um ticket, respeitando as permissões definidas pelo sistema.
+API REST para gerenciamento de tickets de suporte, desenvolvida com foco em organização, autenticação, controle de acesso e histórico de atendimento.
 
-[ ] RF03 — Editar ticket: o usuário deve poder editar as informações de um ticket existente.
+## 🛠️ Tecnologias
 
-[ ] RF04 — Atualizar status: o usuário autorizado deve poder alterar o status de um ticket, por exemplo, de OPEN para IN_PROGRESS.
+[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)](https://nestjs.com/)
+[![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white)](https://www.prisma.io/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io/)
+[![pnpm](https://img.shields.io/badge/pnpm-F69220?style=for-the-badge&logo=pnpm&logoColor=white)](https://pnpm.io/)
 
-[ ] RF05 — Adicionar arquivos: o usuário deve poder anexar arquivos a um ticket.
+## ✨ Funcionalidades
 
-[ ] RF06 — Listar tickets: o usuário deve poder visualizar os tickets aos quais tem acesso.
+- 🎫 Criação, edição e exclusão de tickets.
+- 🔐 Autenticação de usuários e proteção de rotas.
+- 👥 Atribuição de tickets a agentes de suporte.
+- 🔄 Gerenciamento de status e prioridades.
+- 💬 Envio de mensagens e comentários nos tickets.
+- 📎 Anexos de arquivos aos tickets.
+- 📋 Consulta do histórico de alterações.
+- 🔎 Listagem e filtragem por status, prioridade e categoria.
+- 🛡️ Controle de acesso conforme as permissões dos usuários.
 
-[ ] RF07 — Consultar ticket: o usuário deve poder visualizar os detalhes de um ticket específico.
+## 🚀 Como executar o projeto
 
-[ ] RF08 — Comentar no ticket: o usuário deve poder adicionar mensagens ou comentários a um ticket.
+### Pré-requisitos
 
-[ ] RF09 — Consultar histórico: o sistema deve permitir consultar o histórico de alterações de um ticket.
+- [Node.js](https://nodejs.org/)
+- [pnpm](https://pnpm.io/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Redis](https://redis.io/)
 
-[ ] RF10 — Autenticar usuário: o sistema deve permitir que usuários façam login para acessar os recursos protegidos.
+### Instalação
 
-[ ] RF11 — Atribuir responsável: um agente ou administrador autorizado deve poder atribuir um ticket a um agente.
+1. Clone o repositório:
 
-[ ] RF12 — Filtrar tickets: o usuário deve poder filtrar tickets por status, prioridade e categoria.
-# api-tickets
+   ```bash
+   git clone <URL_DO_REPOSITORIO>
+   ```
 
+2. Acesse a pasta do projeto:
 
-Há também riscos na criação e atualização:
+   ```bash
+   cd api-tickets
+   ```
 
-- Todo ticket novo é atribuído ao próprio solicitante (assigned_to_id: userId), embora o campo seja opcional no schema. Isso pode fazer o sistema tratar o cliente como agente responsável. tickets.service.ts (src/tickets.service.ts:17)
-- O cliente pode enviar status, datas de resolução/fechamento e timestamps na criação. Assim, pode criar um ticket já resolvido ou alterar datas que deveriam ser controladas pelo servidor. create-ticket.dto.ts (src/tickets/dto/create-ticket.dto.ts:2)
-- O mesmo DTO é usado na atualização, então a autorização atual permite ao solicitante mudar campos de status e prioridade. Se essas transições devem ser feitas por agentes, será necessário restringir os campos por papel e validar as transições permitidas.
+3. Instale as dependências:
 
-Prioridade sugerida: proteger todos os endpoints e definir quem pode ver, editar e excluir cada ticket; depois, separar os campos aceitos na criação e na atualização. Também vale alinhar as opções do DTO ao schema: o schema inclui WAITING_FOR_CUSTOMER e URGENT, que não aparecem no DTO. schema.prisma (prisma/schema.prisma:60)
+   ```bash
+   pnpm install
+   ```
 
-Este feedback é uma revisão estática da implementação em desenvolvimento; não alterei os arquivos nem executei testes.
-  Worked for 41s • 3:01 PM
+4. Crie o arquivo de ambiente a partir do exemplo:
 
+   ```bash
+   cp .env.example .env
+   ```
 
-  Em tickets.service.ts (src/tickets/tickets.service.ts:325), na atualização do ticket. O DTO permite enviar status, e o serviço aceita esse valor sem conferir se a mudança é válida para o status atual. Por exemplo, um agente pode mudar diretamente de OPEN para CLOSED.
+5. Configure as variáveis de ambiente no arquivo `.env`, incluindo as conexões com PostgreSQL e Redis e os segredos de autenticação necessários.
 
-Se essa regra for desejada, você pode validar as transições permitidas antes de atualizar. A implementação atual verifica se o agente está atribuído ao ticket, mas não restringe a sequência de status.
+6. Execute as migrations do banco de dados:
+
+   ```bash
+   pnpm prisma:migrate
+   ```
+
+7. Inicie o servidor em modo de desenvolvimento:
+
+   ```bash
+   pnpm start:dev
+   ```
+
+## 🧪 Testes
+
+Execute os testes unitários:
+
+```bash
+pnpm test
+```
+
+Execute os testes end-to-end:
+
+```bash
+pnpm test:e2e
+```
+
+## 📁 Estrutura do projeto
+
+A estrutura segue a organização modular do NestJS, separando responsabilidades por módulos e serviços.
+
+```text
+src/
+├── auth/
+├── tickets/
+├── users/
+├── app.module.ts
+└── main.ts
+```
+
+*Os diretórios são ilustrativos; ajuste a estrutura conforme a organização real do repositório.*
+
+## 🔒 Segurança
+
+- Autenticação para acesso aos recursos protegidos.
+- Validação dos dados recebidos pela API.
+- Controle de permissões para operações sobre tickets.
+- Configuração de credenciais e segredos por variáveis de ambiente.
+
+## 📄 Licença
+
+Este projeto foi desenvolvido para fins de estudo e demonstração de conhecimentos em desenvolvimento backend.

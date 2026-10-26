@@ -132,7 +132,9 @@ export class AuthService {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
     });
-    if (!user) {
+
+    const isActive = user?.is_active;
+    if (!user || !isActive) {
       throw new UnauthorizedException('Invalid credentials');
     }
     return this.createSession(user);

@@ -10,8 +10,18 @@ import {
   Request,
   Query,
   Req,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
+  Res,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
+import { resolve } from 'node:path';
 import { TicketsService } from './tickets.service.js';
+import { TicketHistoryService } from './ticket-history.service.js';
+import { TicketMessagesService } from './ticket-messages.service.js';
+import { TicketFilesService } from './ticket-files.service.js';
 import { CreateTicketDto } from './dto/create-ticket.dto.js';
 import { UpdateTicketDto } from './dto/update-ticket.dto.js';
 import { CreateMessageDto } from './dto/create-message.dto.js';
@@ -24,11 +34,17 @@ import { AssignTicketDto } from './dto/assign-ticket.dto.js';
 import { FilterTicketsDto } from './dto/filter-tickets.dto.js';
 import { ApiPaginatedResponse } from './decorator/pagination.decorator.js';
 import { Ticket } from './entities/ticket.entity.js';
+import type { Response } from 'express';
 
 @Controller('tickets')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 export class TicketsController {
-  constructor(private readonly ticketsService: TicketsService) {}
+  constructor(
+    private readonly ticketsService: TicketsService,
+    private readonly ticketHistoryService: TicketHistoryService,
+    private readonly ticketMessagesService: TicketMessagesService,
+    private readonly ticketFilesService: TicketFilesService,
+  ) {}
 
   @Post()
   @Roles(Role.ADMIN, Role.AGENT, Role.CLIENT)
@@ -55,38 +71,79 @@ export class TicketsController {
   }
 
   @Delete(':id')
-  @Roles(Role.ADMIN, Role.AGENT)
+  @Roles(Role.ADMIN)
   remove(@Param('id') id: string, @Request() req: any) {
-    return this.ticketsService.remove(id, req.user.userId, req.user.role);
+    return this.ticketsService.remove(id, req.user.role);
   }
 
   @Get(':id/history')
   @Roles(Role.ADMIN, Role.AGENT)
   getHistory(@Param('id') id: string, @Request() req: any) {
-    return this.ticketsService.getHistory(id, req.user.userId, req.user.role);
+    return this.ticketHistoryService.getHistory(id, req.user.userId, req.user.role);
   }
 
   @Post(':id/messages')
   @Roles(Role.ADMIN, Role.AGENT, Role.CLIENT)
   addMessage(@Param('id') id: string, @Body() createMessageDto: CreateMessageDto, @Request() req: any) {
-    return this.ticketsService.addMessage(id, createMessageDto, req.user.userId, req.user.role);
+    return this.ticketMessagesService.addMessage(id, createMessageDto, req.user.userId, req.user.role);
+  }
+
+  @Post(':id/files')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: memoryStorage(),
+      limits: { fileSize: 10 * 1024 * 1024 },
+    }),
+  )
+  @Roles(Role.ADMIN, Role.AGENT, Role.CLIENT)
+  uploadFile(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+    @Request() req: any,
+  ) {
+    if (!file) {
+      throw new BadRequestException('Nenhum arquivo foi enviado.');
+    }
+
+    return this.ticketFilesService.uploadFile(
+      id,
+      file,
+      req.user.userId,
+      req.user.role,
+    );
+  }
+
+  @Get(':id/files/:filename')
+  async downloadFile(
+    @Param('id') id: string,
+    @Param('filename') filename: string,
+    @Request() req: any,
+    @Res() res: Response,
+  ) {
+    const storedFilename = await this.ticketFilesService.getTicketFile(
+      id,
+      filename,
+      req.user.userId,
+      req.user.role,
+    );
+    return res.sendFile(resolve(process.cwd(), 'uploads', storedFilename));
   }
 
   @Get(':id/messages')
   getMessages(@Param('id') id: string, @Request() req: any) {
-    return this.ticketsService.getMessages(id, req.user.userId, req.user.role);
+    return this.ticketMessagesService.getMessages(id, req.user.userId, req.user.role);
   }
 
   @Patch('/messages/:messageId')
   @Roles(Role.ADMIN, Role.AGENT, Role.CLIENT)
   updateMessage(@Param('messageId') messageId: string, @Body() updateMessageDto: UpdateMessageDto, @Request() req: any) {
-    return this.ticketsService.updateMessage(messageId, updateMessageDto, req.user.userId, req.user.role);
+    return this.ticketMessagesService.updateMessage(messageId, updateMessageDto, req.user.userId, req.user.role);
   }
 
   @Delete('/messages/:messageId')
   @Roles(Role.ADMIN, Role.AGENT, Role.CLIENT)
   deleteMessage(@Param('messageId') messageId: string, @Request() req: any) {
-    return this.ticketsService.deleteMessage(messageId, req.user.userId, req.user.role);
+    return this.ticketMessagesService.deleteMessage(messageId, req.user.userId, req.user.role);
   }
 
   @Patch(':id/assign')

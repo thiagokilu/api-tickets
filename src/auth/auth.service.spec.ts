@@ -219,6 +219,7 @@ describe('AuthService', () => {
         id: '550e8400-e29b-41d4-a716-446655440000',
         email: 'test@test.com',
         username: 'testuser',
+        is_active: true,
       });
       mockJwtService.sign.mockReturnValue('new-mock-jwt-token');
 
