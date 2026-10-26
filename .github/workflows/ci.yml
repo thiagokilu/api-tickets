@@ -8,8 +8,15 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  test:
+  validate:
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -67,5 +74,11 @@ jobs:
         run: pnpm prisma generate
       - name: Run database migrations
         run: pnpm prisma migrate deploy
-      - name: Run tests
+      - name: Run lint
+        run: pnpm lint
+      - name: Run build
+        run: pnpm build
+      - name: Run unit tests
         run: pnpm test
+      - name: Run end-to-end tests
+        run: pnpm test:e2e
