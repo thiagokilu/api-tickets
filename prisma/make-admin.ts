@@ -1,15 +1,16 @@
 
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from '../src/app.module';
-import { PrismaService } from '../src/services/prisma.js';
-import { Role } from '../generated/prisma/client.js';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Role, PrismaClient } from '../src/generated/prisma/client.js';
+import 'dotenv/config';
+
+const prisma = new PrismaClient({
+  adapter: new PrismaPg({
+    connectionString: process.env.DATABASE_URL,
+  }),
+});
 
 async function main() {
-  const app = await NestFactory.createApplicationContext(AppModule);
-
   try {
-    const prisma = app.get(PrismaService);
-
     // Listar usuários existentes
     const users = await prisma.user.findMany({
       select: {
@@ -25,10 +26,10 @@ async function main() {
       console.log(`- ${user.email} (${user.username}) - Role: ${user.role}`);
     });
 
-    // Atualizar o usuário (mude o email para um existente)
+    // Atualizar o usuário criado em requsição.http
     const user = await prisma.user.update({
       where: {
-        email: 'thiago@email.com',
+        email: 'test@email.com',
       },
       data: {
         role: Role.ADMIN,
@@ -37,7 +38,7 @@ async function main() {
 
     console.log(`\nUsuário ${user.email} agora é ADMIN.`);
   } finally {
-    await app.close();
+    await prisma.$disconnect();
   }
 }
 

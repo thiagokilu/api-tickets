@@ -7,13 +7,28 @@ import { AssignTicketDto } from './dto/assign-ticket.dto.js';
 import { FilterTicketsDto } from './dto/filter-tickets.dto.js';
 import { TICKET_INCLUDE } from './ticket.includes.js';
 import { TicketHistoryService } from './ticket-history.service.js';
+import { ChatOpenAI } from '@langchain/openai';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class TicketsService {
+  private readonly model: ChatOpenAI;
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly ticketHistoryService: TicketHistoryService,
-  ) {}
+    private readonly config: ConfigService,
+  ) {
+    this.model = new ChatOpenAI({
+      model: this.config.getOrThrow<string>('NVIDIA_MODEL'),
+      apiKey: this.config.getOrThrow<string>('NVIDIA_API_KEY'),
+      configuration: {
+        baseURL: this.config.getOrThrow<string>('NVIDIA_BASE_URL'),
+      },
+      timeout: 300_000,
+      temperature: 0.3,
+    });
+  }
 
   async create(createTicketDto: CreateTicketDto, userId: string) {
     const include = TICKET_INCLUDE;
@@ -24,13 +39,44 @@ export class TicketsService {
           title: createTicketDto.title,
           description: createTicketDto.description,
           status: TicketStatus.OPEN,
-          priority: TicketPriority.MEDIUM,
+          priority: null,
           requester_id: userId,
           category_id: createTicketDto.category_id,
           client_files: [],
         },
         include,
       });
+
+      const systemPrompt = `Você é um assistente de tickets de suporte. Sua tarefa é analisar o ticket e definir uma prioridade apropriada.
+
+Use as seguintes prioridades:
+- LOW: Problemas menores, perguntas gerais, não afeta operações críticas
+- MEDIUM: Problemas que causam algum impacto mas não bloqueiam operações
+- HIGH: Problemas que afetam significativamente as operações ou causam frustração
+- URGENT: Problemas críticos que bloqueiam operações inteiras, causam perda de dados ou representam risco de segurança
+
+Responda APENAS com uma das seguintes palavras: LOW, MEDIUM, HIGH ou URGENT`;
+
+      const response = await this.model.invoke([
+        ['system', systemPrompt],
+        ['human', `Título: ${createTicketDto.title}\nDescrição: ${createTicketDto.description}`],
+      ]);
+
+      const priorityText = response.content.toString().trim().toUpperCase();
+      const validPriorities = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'];
+      const priority = validPriorities.includes(priorityText) 
+        ? priorityText as TicketPriority 
+        : TicketPriority.MEDIUM;
+
+      const updatePriority = await tx.tickets.update({
+        where: {
+          id: ticket.id,
+        },
+        data: {
+          priority,
+        },
+      });
+
 
       await tx.ticketHistory.create({
         data: {
@@ -41,14 +87,24 @@ export class TicketsService {
           new_value: JSON.stringify({
             title: ticket.title,
             description: ticket.description,
-            priority: ticket.priority,
+            priority: updatePriority.priority,
             status: ticket.status,
             category_id: ticket.category_id,
           }),
         },
       });
 
-      return ticket;
+      await tx.ticketHistory.create({
+        data: {
+          ticket_id: ticket.id,
+          actor_id: userId,
+          field_name: 'priority',
+          old_value: TicketPriority.MEDIUM,
+          new_value: updatePriority.priority,
+        },
+      });
+
+      return updatePriority;
     });
   }
 
@@ -371,6 +427,7 @@ export class TicketsService {
           new_value: assignedToId,
         },
       });
+
 
       return updatedTicket;
     });

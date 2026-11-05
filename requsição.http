@@ -1,23 +1,9 @@
-@baseUrl = http://localhost:3000
-@email = test@example.com
-@password = password123
-
-### Verificar API
-GET {{baseUrl}}/
-
-### Criar usuário
-POST {{baseUrl}}/auth/register
-Content-Type: application/json
-
-{
-  "username": "testuser",
-  "email": "{{email}}",
-  "password": "{{password}}"
-}
-
-> {% client.global.set("token", response.body.access_token); %}
+@baseUrl = http://localhost:3333
+@email = test@email.com
+@password = 123456
 
 ### Fazer login
+# @name login
 POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
@@ -26,22 +12,20 @@ Content-Type: application/json
   "password": "{{password}}"
 }
 
-> {% client.global.set("token", response.body.access_token); %}
-
-### Criar ticket
+### Criar ticket de exemplo usando o token do login
 POST {{baseUrl}}/tickets
+Authorization: Bearer {{login.response.body.$.access_token}}
 Content-Type: application/json
-Authorization: Bearer {{token}}
 
 {
-  "title": "Problema no sistema",
-  "description": "Não consigo acessar uma funcionalidade."
+  "title": "Exemplo de solicitação de suporte",
+  "description": "Este ticket foi criado para testar o fluxo de atendimento da API."
 }
 
 ### Atualizar ticket
 PATCH {{baseUrl}}/tickets/1
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{login.response.body.$.access_token}}
 
 {
   "title": "Problema no sistema atualizado",
@@ -52,4 +36,4 @@ Authorization: Bearer {{token}}
 
 ### Deletar ticket
 DELETE {{baseUrl}}/tickets/1
-Authorization: Bearer {{token}}
+Authorization: Bearer {{login.response.body.$.access_token}}

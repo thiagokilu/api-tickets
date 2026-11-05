@@ -32,6 +32,7 @@ API REST para gerenciamento de tickets de suporte, desenvolvida com foco em orga
 - [PostgreSQL](https://www.postgresql.org/)
 - [Redis](https://redis.io/)
 - [Docker](https://www.docker.com/)
+- Docker Compose com a imagem `pgvector/pgvector`
 
 ### Instalação
 
@@ -61,13 +62,19 @@ API REST para gerenciamento de tickets de suporte, desenvolvida com foco em orga
 
 5. Configure as variáveis de ambiente no arquivo `.env`, incluindo as conexões com PostgreSQL e Redis e os segredos de autenticação necessários.
 
-6. Execute as migrations do banco de dados:
+6. Inicie o PostgreSQL com `pgvector` e o Redis:
+
+   ```bash
+   docker compose up -d
+   ```
+
+7. Execute as migrations do banco de dados:
 
    ```bash
    pnpm prisma:migrate
    ```
 
-7. Inicie o servidor em modo de desenvolvimento:
+8. Inicie o servidor em modo de desenvolvimento:
 
    ```bash
    pnpm start:dev

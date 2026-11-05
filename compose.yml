@@ -1,6 +1,32 @@
 services:
+  app:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: api-tickets-app
+    restart: unless-stopped
+    ports:
+      - '${APP_PORT:-3000}:3000'
+    environment:
+      DATABASE_URL: postgresql://${POSTGRESQL_USERNAME:-api_tickets}:${POSTGRESQL_PASSWORD:-api_tickets}@postgres:5432/${POSTGRESQL_DATABASE:-api_tickets}?schema=public
+      REDIS_URL: redis://redis:6379
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: ${JWT_SECRET}
+      NVIDIA_API_KEY: ${NVIDIA_API_KEY}
+      NVIDIA_MODEL: ${NVIDIA_MODEL:-z-ai/glm-5.3-flash}
+      NVIDIA_BASE_URL: ${NVIDIA_BASE_URL:-https://integrate.api.nvidia.com/v1}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000}
+      NODE_ENV: production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
   postgres:
-    image: postgres:18
+    image: pgvector/pgvector:pg18
     restart: unless-stopped
     ports:
       - '${POSTGRES_PORT:-5433}:5432'

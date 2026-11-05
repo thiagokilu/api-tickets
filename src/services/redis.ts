@@ -3,6 +3,7 @@ import {
   Injectable,
   OnModuleDestroy,
   OnModuleInit,
+  Module,
 } from '@nestjs/common';
 import { Redis } from 'ioredis';
 
@@ -79,3 +80,10 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     }
   }
 }
+
+@Global()
+@Module({
+  providers: [RedisService],
+  exports: [RedisService],
+})
+export class RedisModule {}

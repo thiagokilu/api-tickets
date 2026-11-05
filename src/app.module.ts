@@ -7,6 +7,9 @@ import { TicketsModule } from './tickets/tickets.module.js';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ConfigModule } from '@nestjs/config';
 import { validateEnv } from './config/env/env.js';
+import { ChatModule } from './chat/chat.module.js';
+import { RagModule } from './rag/rag.module.js';
+import { RedisModule } from './services/redis.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -23,6 +26,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
       appSecret: 'YOUR_APP_SECRET',
       serviceId: 'api-tickets',
     }),
+    RedisModule,
     AuthModule,
     TicketsModule,
     ThrottlerModule.forRoot([
@@ -37,6 +41,8 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
         limit: 100,
       },
     ]),
+    ChatModule,
+    RagModule,
   ],
   controllers: [AppController],
   providers: [AppService],
