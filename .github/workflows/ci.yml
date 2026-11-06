@@ -55,10 +55,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Setup environment variables
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          REDIS_URL: ${{ secrets.REDIS_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: |
-          echo "DATABASE_URL=postgresql://api_tickets:api_tickets@localhost:5432/api_tickets?schema=public" >> $GITHUB_ENV
-          echo "REDIS_URL=redis://localhost:6379" >> $GITHUB_ENV
-          echo "JWT_SECRET=test-jwt-secret-for-ci-environment-only" >> $GITHUB_ENV
+          echo "DATABASE_URL=$DATABASE_URL" >> "$GITHUB_ENV"
+          echo "REDIS_URL=$REDIS_URL" >> "$GITHUB_ENV"
+          echo "JWT_SECRET=$JWT_SECRET" >> "$GITHUB_ENV"
       - name: Generate Prisma Client
         run: pnpm prisma generate
       - name: Run database migrations
