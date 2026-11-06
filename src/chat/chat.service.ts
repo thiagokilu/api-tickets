@@ -35,7 +35,7 @@ export class ChatService {
 
   private async getSupportGuideContent(): Promise<string> {
     try {
-      const supportGuidePath = join(process.cwd(), 'src', 'documents', 'suporte.md');
+      const supportGuidePath = join(process.cwd(), 'src', 'documents', 'suport.md');
       const splitter = new MarkdownTextSplitter({
         chunkSize: 1000,
         chunkOverlap: 200,

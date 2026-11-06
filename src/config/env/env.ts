@@ -38,7 +38,9 @@ const envSchema = z.object({
     .url()
     .default('https://integrate.api.nvidia.com/v1'),
 
-  GEMINI_API_KEY: z.string().min(1, 'GEMINI_API_KEY é obrigatório'),
+  OBSERVE_APP_KEY: z.string().min(1, 'OBSERVE_APP_KEY é obrigatório'),
+
+  OBSERVE_APP_SECRET: z.string().min(1, 'OBSERVE_APP_SECRET é obrigatório'),
 });
 
 export function validateEnv(config: Record<string, unknown>) {

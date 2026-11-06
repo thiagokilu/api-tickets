@@ -1,4 +1,4 @@
-import { Injectable, ForbiddenException, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, ForbiddenException, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
 import { CreateTicketDto } from './dto/create-ticket.dto.js';
 import { UpdateTicketDto } from './dto/update-ticket.dto.js';
 import { PrismaService } from '../services/prisma.js';
@@ -13,6 +13,7 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class TicketsService {
   private readonly model: ChatOpenAI;
+  private readonly logger = new Logger(TicketsService.name);
 
   constructor(
     private readonly prisma: PrismaService,
@@ -33,13 +34,13 @@ export class TicketsService {
   async create(createTicketDto: CreateTicketDto, userId: string) {
     const include = TICKET_INCLUDE;
 
-    return this.prisma.$transaction(async (tx) => {
+    const ticket = await this.prisma.$transaction(async (tx) => {
       const ticket = await tx.tickets.create({
         data: {
           title: createTicketDto.title,
           description: createTicketDto.description,
           status: TicketStatus.OPEN,
-          priority: null,
+          priority: TicketPriority.MEDIUM,
           requester_id: userId,
           category_id: createTicketDto.category_id,
           client_files: [],
@@ -47,6 +48,35 @@ export class TicketsService {
         include,
       });
 
+      await tx.ticketHistory.create({
+        data: {
+          ticket_id: ticket.id,
+          actor_id: userId,
+          field_name: 'ticket_created',
+          old_value: null,
+          new_value: JSON.stringify({
+            title: ticket.title,
+            description: ticket.description,
+            priority: ticket.priority,
+            status: ticket.status,
+            category_id: ticket.category_id,
+          }),
+        },
+      });
+
+      return ticket;
+    });
+
+    // Chama a IA de forma assíncrona para definir a prioridade
+    this.updatePriorityWithAI(ticket.id, createTicketDto.title, createTicketDto.description, userId).catch((error) => {
+      this.logger.error(`Erro ao definir prioridade com IA para ticket ${ticket.id}`, error);
+    });
+
+    return ticket;
+  }
+
+  private async updatePriorityWithAI(ticketId: string, title: string, description: string, userId: string) {
+    try {
       const systemPrompt = `Você é um assistente de tickets de suporte. Sua tarefa é analisar o ticket e definir uma prioridade apropriada.
 
 Use as seguintes prioridades:
@@ -59,53 +89,45 @@ Responda APENAS com uma das seguintes palavras: LOW, MEDIUM, HIGH ou URGENT`;
 
       const response = await this.model.invoke([
         ['system', systemPrompt],
-        ['human', `Título: ${createTicketDto.title}\nDescrição: ${createTicketDto.description}`],
+        ['human', `Título: ${title}\nDescrição: ${description}`],
       ]);
 
       const priorityText = response.content.toString().trim().toUpperCase();
       const validPriorities = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'];
-      const priority = validPriorities.includes(priorityText) 
-        ? priorityText as TicketPriority 
+      const priority = validPriorities.includes(priorityText)
+        ? priorityText as TicketPriority
         : TicketPriority.MEDIUM;
 
-      const updatePriority = await tx.tickets.update({
-        where: {
-          id: ticket.id,
-        },
-        data: {
-          priority,
-        },
+      const ticket = await this.prisma.tickets.findUnique({
+        where: { id: ticketId },
       });
 
+      if (!ticket) {
+        this.logger.warn(`Ticket ${ticketId} não encontrado ao atualizar prioridade`);
+        return;
+      }
 
-      await tx.ticketHistory.create({
-        data: {
-          ticket_id: ticket.id,
-          actor_id: userId,
-          field_name: 'ticket_created',
-          old_value: null,
-          new_value: JSON.stringify({
-            title: ticket.title,
-            description: ticket.description,
-            priority: updatePriority.priority,
-            status: ticket.status,
-            category_id: ticket.category_id,
-          }),
-        },
+      await this.prisma.$transaction(async (tx) => {
+        await tx.tickets.update({
+          where: { id: ticketId },
+          data: { priority },
+        });
+
+        await tx.ticketHistory.create({
+          data: {
+            ticket_id: ticketId,
+            actor_id: userId,
+            field_name: 'priority',
+            old_value: ticket.priority,
+            new_value: priority,
+          },
+        });
       });
 
-      await tx.ticketHistory.create({
-        data: {
-          ticket_id: ticket.id,
-          actor_id: userId,
-          field_name: 'priority',
-          old_value: TicketPriority.MEDIUM,
-          new_value: updatePriority.priority,
-        },
-      });
-
-      return updatePriority;
-    });
+      this.logger.log(`Prioridade do ticket ${ticketId} atualizada para ${priority} pela IA`);
+    } catch (error) {
+      this.logger.error(`Erro ao atualizar prioridade do ticket ${ticketId} com IA`, error);
+    }
   }
 
   async findAll(userId: string, userRole: Role, filters: FilterTicketsDto = {}) {

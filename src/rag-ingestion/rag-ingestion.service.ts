@@ -1,20 +1,28 @@
 
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { GoogleGenerativeAIEmbeddings } from '@langchain/google-genai';
+import { OpenAIEmbeddings } from '@langchain/openai';
 import { PGVectorStore } from '@langchain/community/vectorstores/pgvector';
 import { Document } from '@langchain/core/documents';
+import { createHash } from 'node:crypto';
+import { PrismaService } from '../services/prisma.js';
 
 @Injectable()
 export class RagIngestionService implements OnModuleInit {
   private vectorStore: PGVectorStore;
 
-  constructor(private config: ConfigService) {}
+  constructor(
+    private config: ConfigService,
+    private prisma: PrismaService,
+  ) {}
 
   async onModuleInit() {
-    const embeddings = new GoogleGenerativeAIEmbeddings({
-      model: 'text-embedding-004',
-      apiKey: this.config.getOrThrow('GEMINI_API_KEY'),
+    const embeddings = new OpenAIEmbeddings({
+      model: 'nvidia/nv-embedqa-mistral-7b-v2',
+      apiKey: this.config.getOrThrow('NVIDIA_API_KEY'),
+      configuration: {
+        baseURL: this.config.getOrThrow('NVIDIA_BASE_URL'),
+      },
     });
 
     this.vectorStore = await PGVectorStore.initialize(
@@ -36,16 +44,30 @@ export class RagIngestionService implements OnModuleInit {
     );
   }
 
-  async indexDocuments() {
-    const chunks = await this.loadAndSplit();
+async indexDocuments() {
+  const chunks = await this.loadAndSplit();
 
-    await this.vectorStore.addDocuments(chunks);
+  const ids = chunks.map((chunk, index) =>
+    createHash('sha256')
+      .update(`${chunk.metadata.source}:${index}:${chunk.pageContent}`)
+      .digest('hex'),
+  );
 
-    return {
-      message: 'Documento indexado com sucesso!',
-      chunks: chunks.length,
-    };
-  }
+  await this.vectorStore.addDocuments(chunks, { ids });
+  await this.deleteDocumentsBySource('suport.md');
+
+  return {
+    message: 'Documento indexado com sucesso!',
+    chunks: chunks.length,
+  };
+}
+
+private async deleteDocumentsBySource(source: string) {
+  await this.prisma.$executeRawUnsafe(
+    `DELETE FROM rag_documents WHERE metadata->>'source' = $1`,
+    source,
+  );
+}
 
   async loadAndSplit() {
     const { readFile } = await import('node:fs/promises');
