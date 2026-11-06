@@ -43,7 +43,6 @@ docker-compose.yml
 compose.yml
 dockerfile
 .dockerignore
-docker-entrypoint.sh
 
 # Misc
 *.log
