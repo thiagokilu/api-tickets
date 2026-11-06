@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TicketsService } from './tickets.service.js';
 import { TicketHistoryService } from './ticket-history.service.js';
 import { PrismaService } from '../services/prisma.js';
+import { ConfigService } from '@nestjs/config';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Role, TicketStatus } from '../generated/prisma/enums.js';
 import { vi } from 'vitest';
@@ -38,6 +39,19 @@ describe('TicketsService', () => {
           useValue: mockPrismaService,
         },
         TicketHistoryService,
+        {
+          provide: ConfigService,
+          useValue: {
+            getOrThrow: vi.fn((key: string) => {
+              const values: Record<string, string> = {
+                NVIDIA_MODEL: 'mock-model',
+                NVIDIA_API_KEY: 'mock-api-key',
+                NVIDIA_BASE_URL: 'https://mock.example.com',
+              };
+              return values[key];
+            }),
+          },
+        },
       ],
     }).compile();
 
