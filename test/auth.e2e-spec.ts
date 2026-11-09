@@ -95,6 +95,23 @@ describe('AuthController (e2e)', () => {
     expect(response.body.access_token).toEqual(expect.any(String));
   });
 
+  it('/auth/me (GET) - requires authentication', () => {
+    return request(app.getHttpServer()).get('/auth/me').expect(401);
+  });
+
+  it('/auth/me (GET) - returns the authenticated user and role', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/auth/me')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .expect(200);
+
+    expect(response.body).toEqual({
+      id: adminId,
+      email: `admin-${testId}@example.com`,
+      role: Role.ADMIN,
+    });
+  });
+
   it('/auth/employee (POST) - requires authentication', () => {
     return request(app.getHttpServer())
       .post('/auth/employee')
