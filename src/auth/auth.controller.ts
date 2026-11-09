@@ -30,6 +30,10 @@ import { LoginDto } from './dto/login.dto.js';
 import { InviteEmployeeDto } from './dto/invite-employee.dto.js';
 import { CompleteEmployeeDto } from './dto/complete-employee.dto.js';
 import { UpdateRoleDto } from './dto/update-role.dto.js';
+import { UpdateProfileDto } from './dto/update-profile.dto.js';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -45,6 +49,27 @@ export class AuthController {
   @Post('login')
   login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('me')
+  me(@Request() req: RequestWithUser) {
+    return {
+      id: req.user.userId,
+      email: req.user.email,
+      role: req.user.role,
+    };
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('profile')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Atualiza o nome do usuário autenticado' })
+  updateProfile(
+    @Request() req: RequestWithUser,
+    @Body() updateProfileDto: UpdateProfileDto,
+  ) {
+    return this.authService.updateProfile(req.user.userId, updateProfileDto.username);
   }
   
   @Throttle({ default: { limit: 100, ttl: 60000 } })
@@ -74,6 +99,15 @@ export class AuthController {
   @Post('employee/complete')
   completeEmployee(@Body() completeEmployeeDto: CompleteEmployeeDto) {
     return this.authService.completeEmployee(completeEmployeeDto);
+  }
+
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(Role.ADMIN)
+  @Get('users')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Lista todos os usuários (somente administrador)' })
+  listUsers() {
+    return this.authService.listUsers();
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)

@@ -1,4 +1,4 @@
-import { IsArray, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsNotEmpty, IsOptional, IsString, IsUUID, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class ChatMessageDto {
@@ -21,4 +21,8 @@ export class SendMessageDto {
   @IsString()
   @IsNotEmpty()
   message: string;
+
+  @IsOptional()
+  @IsUUID()
+  ticketId?: string;
 }

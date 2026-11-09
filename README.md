@@ -119,3 +119,15 @@ src/
 ## 📄 Licença
 
 Este projeto foi desenvolvido para fins de estudo e demonstração de conhecimentos em desenvolvimento backend.
+
+
+Avaliação: o projeto tem uma base boa para um MVP: está organizado em módulos NestJS e já inclui autenticação, controle de acesso, tickets, mensagens, anexos, histórico, chat, RAG e workflow de CI. Mas, pelo que revisei, eu ainda não o consideraria pronto para produção.
+
+Os pontos que mais pesam:
+
+- Falha de segurança no WebSocket: o chat apenas decodifica o conteúdo do JWT; não verifica sua assinatura nem sua validade. Isso pode permitir que alguém se conecte com um token forjado. Veja chat.gateway.ts (src/chat/chat.gateway.ts:126).
+- O passo de migrations do README não corresponde aos scripts disponíveis: a documentação manda executar pnpm prisma:migrate, mas esse script não aparece no package.json (package.json:9). Também encontrei divergências entre README.md (README.md:71), .env.example, docker-compose.yml e compose.yml nas portas e no modo de iniciar os serviços.
+- A configuração de ambiente é rígida: NVIDIA_API_KEY e as credenciais do Observe são obrigatórias para subir a aplicação, junto com banco, Redis e JWT. Isso complica a execução local e qualquer ambiente que não use esses serviços. Veja env.ts (src/config/env/env.ts:17) e app.module.ts (src/app.module.ts:14).
+- Há riscos operacionais para revisar: o ingresso RAG depende da API NVIDIA durante a inicialização (rag-ingestion.service.ts (src/rag-ingestion/rag-ingestion.service.ts:19)); e os anexos são armazenados no disco local, o que exige uma estratégia de persistência e backup no deploy.
+
+Resumo: está bem encaminhado como projeto de estudo ou MVP, mas antes de chamar de pronto eu corrigiria a validação do JWT no WebSocket, deixaria a inicialização previsível sem integrações opcionais e alinharia documentação, scripts e Compose. Não executei build nem testes; esta avaliação foi uma revisão estática dos arquivos.

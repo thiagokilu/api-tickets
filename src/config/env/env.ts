@@ -31,7 +31,7 @@ const envSchema = z.object({
 
   NVIDIA_API_KEY: z.string().min(1, 'NVIDIA_API_KEY é obrigatório'),
 
-  NVIDIA_MODEL: z.string().min(1).default('z-ai/glm-5.3-flash'),
+  NVIDIA_MODEL: z.string().min(1).default('nvidia/nemotron-3.5-bolt-e4b'),
 
   NVIDIA_BASE_URL: z
     .string()

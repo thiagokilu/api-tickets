@@ -10,6 +10,7 @@ import { ChatModule } from './chat/chat.module.js';
 import { RagModule } from './rag/rag.module.js';
 import { RedisModule } from './services/redis.js';
 import { ObserveModule } from './observe.js';
+import { CategoriesModule } from './categories/categories.module.js';
 
 const env = validateEnv(process.env);
 
@@ -29,6 +30,7 @@ const env = validateEnv(process.env);
     RedisModule,
     AuthModule,
     TicketsModule,
+    CategoriesModule,
     ThrottlerModule.forRoot([
       {
         name: 'short',

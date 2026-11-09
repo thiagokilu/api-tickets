@@ -49,10 +49,16 @@ export class ChatService {
     }
   }
 
-  private async getTicketsContext(userId: string, role: string): Promise<string> {
+  private async getTicketsContext(
+    userId: string,
+    role: string,
+    ticketId?: string,
+  ): Promise<string> {
     try {
       let whereClause: any = {
-        status: { in: ['OPEN', 'IN_PROGRESS'] },
+        ...(ticketId
+          ? { id: ticketId }
+          : { status: { in: ['OPEN', 'IN_PROGRESS'] } }),
       };
 
       if (role === 'CLIENT') {
@@ -71,6 +77,9 @@ export class ChatService {
       });
 
       if (tickets.length === 0) {
+        if (ticketId) {
+          return `Nenhum ticket com o ID ${ticketId} foi encontrado ou você não tem acesso a ele.`;
+        }
         return role === 'CLIENT'
           ? 'Você não possui tickets abertos ou em andamento no momento.'
           : 'Não há tickets abertos ou em andamento no momento.';
@@ -91,11 +100,11 @@ export class ChatService {
   }
 
   private async buildMessages(dto: SendMessageDto, userId: string, role: string) {
-    const ticketsContext = await this.getTicketsContext(userId, role);
+    const ticketsContext = await this.getTicketsContext(userId, role, dto.ticketId);
     const supportGuide = await this.getSupportGuideContent();
     const messages: (SystemMessage | HumanMessage | AIMessage)[] = [
       new SystemMessage(
-        `Você é um assistente virtual prestativo e objetivo especializado em suporte técnico. Você tem acesso aos tickets do sistema de suporte e deve seguir estritamente o guia de soluções de problemas abaixo.\n\n=== GUIA DE SUPORTE ===\n${supportGuide}\n=== FIM DO GUIA ===\n\n=== TICKETS DISPONÍVEIS ===\n${ticketsContext}\n=== FIM DOS TICKETS ===\n\nUse essas informações para responder perguntas sobre os tickets e seguir os procedimentos padrão do guia de suporte. Sempre que um usuário descrever um problema, consulte o guia para identificar a solução mais adequada e siga os passos recomendados.`,
+        `Você é um assistente virtual prestativo e objetivo especializado em suporte técnico. Você tem acesso aos tickets do sistema de suporte e deve seguir estritamente o guia de soluções de problemas abaixo.\n\n=== GUIA DE SUPORTE ===\n${supportGuide}\n=== FIM DO GUIA ===\n\n=== TICKETS DISPONÍVEIS ===\n${ticketsContext}\n=== FIM DOS TICKETS ===\n\nUse essas informações para responder perguntas sobre os tickets e seguir os procedimentos padrão do guia de suporte. Sempre que um usuário descrever um problema, consulte o guia para identificar a solução mais adequada e siga os passos recomendados. Quando o contexto indicar que o ticket solicitado não foi encontrado, informe isso claramente e não invente informações.`,
       ),
     ];
 
@@ -187,7 +196,8 @@ export class ChatService {
   }
 
   private describeRequest(dto: SendMessageDto): string {
-    return `${dto.message.length} caracteres, ${dto.history?.length ?? 0} mensagens no histórico`;
+    const ticketContext = dto.ticketId ? `, ticket ${dto.ticketId}` : '';
+    return `${dto.message.length} caracteres, ${dto.history?.length ?? 0} mensagens no histórico${ticketContext}`;
   }
 
   private logError(context: string, error: unknown): void {

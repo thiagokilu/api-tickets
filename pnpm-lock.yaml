@@ -36,8 +36,8 @@ importers:
         specifier: '*'
         version: 12.0.0(@nestjs/common@12.3.2(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0))(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)
       '@nestjs/observe':
-        specifier: ^0.3.0
-        version: 0.3.12(@nestjs/common@12.3.2(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0))(@nestjs/core@12.3.2)(@nestjs/websockets@12.3.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+        specifier: ^0.3.25
+        version: 0.3.25(@nestjs/common@12.3.2(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0))(@nestjs/core@12.3.2)(@nestjs/websockets@12.3.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/passport':
         specifier: ^12.0.0
         version: 12.0.0(@nestjs/common@12.3.2(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0))(passport@0.7.0)
@@ -1107,9 +1107,10 @@ packages:
     engines: {node: '>= 20.0.0'}
     hasBin: true
 
-  '@nestjs/observe@0.3.12':
-    resolution: {integrity: sha512-4ApUa5N5L4iP9ohlhFF8M4wFHZ42K3jY2OzF4xWELp/gyv8aRplUifMwdDeX7+DSuH6ZLJKrEaAeGpcu0jUxXA==}
+  '@nestjs/observe@0.3.25':
+    resolution: {integrity: sha512-kZ9tgDd2R8fpO4TGArLz1kkIPDCt7v2iyiclDbA2ci7on6Y34EGQcksns1MskxpuY8r8wxN2IMw9dO+7bkrhgw==}
     engines: {node: '>= 20.19.0'}
+    hasBin: true
     peerDependencies:
       '@nestjs/bull': ^11.0.0 || ^12.0.0
       '@nestjs/bullmq': ^11.0.0 || ^12.0.0
@@ -1119,6 +1120,7 @@ packages:
       '@nestjs/microservices': ^11.0.0 || ^12.0.0
       '@nestjs/schedule': ^4.0.0 || ^5.0.0 || ^6.0.0 || ^12.0.0
       '@nestjs/websockets': ^11.0.0 || ^12.0.0
+      '@opentelemetry/api': ^1.0.0
       '@taskforcesh/bullmq-pro': ^7.0.0
       bull: ^3.3.0 || ^4.0.0
       bullmq: ^5.0.0 || ^6.0.0
@@ -1136,6 +1138,8 @@ packages:
       '@nestjs/schedule':
         optional: true
       '@nestjs/websockets':
+        optional: true
+      '@opentelemetry/api':
         optional: true
       '@taskforcesh/bullmq-pro':
         optional: true
@@ -4412,7 +4416,7 @@ snapshots:
       ora: 5.4.1
       undici: 6.20.1
 
-  '@nestjs/observe@0.3.12(@nestjs/common@12.3.2(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0))(@nestjs/core@12.3.2)(@nestjs/websockets@12.3.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)':
+  '@nestjs/observe@0.3.25(@nestjs/common@12.3.2(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0))(@nestjs/core@12.3.2)(@nestjs/websockets@12.3.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       '@nestjs/common': 12.3.2(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0)

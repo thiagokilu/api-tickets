@@ -223,4 +223,47 @@ export class AuthService {
       },
     });
   }
+
+  async listUsers() {
+    return this.prisma.user.findMany({
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        role: true,
+        is_active: true,
+        created_at: true,
+        updated_at: true,
+      },
+      orderBy: { created_at: 'desc' },
+    });
+  }
+
+  async updateProfile(userId: string, username: string) {
+    try {
+      return await this.prisma.user.update({
+        where: { id: userId },
+        data: { username },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          role: true,
+          is_active: true,
+          created_at: true,
+          updated_at: true,
+        },
+      });
+    } catch (error) {
+      if (
+        typeof error === 'object' &&
+        error !== null &&
+        'code' in error &&
+        error.code === 'P2002'
+      ) {
+        throw new BadRequestException('Username already exists');
+      }
+      throw error;
+    }
+  }
 }
