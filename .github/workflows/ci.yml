@@ -74,6 +74,9 @@ jobs:
     name: Unit Tests
     runs-on: ubuntu-latest
 
+    env:
+      JWT_SECRET: ci-unit-test-secret-only-not-for-production-123456
+
     steps:
       - uses: actions/checkout@v4
 
@@ -107,7 +110,7 @@ jobs:
           POSTGRES_PASSWORD: api_tickets
           POSTGRES_DB: api_tickets
         ports:
-          - 5432:5432
+          - 5433:5432
         options: >-
           --health-cmd "pg_isready -U api_tickets -d api_tickets"
           --health-interval 5s
@@ -117,7 +120,7 @@ jobs:
       redis:
         image: redis:7
         ports:
-          - 6379:6379
+          - 6381:6379
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 5s
