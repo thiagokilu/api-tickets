@@ -1,5 +1,11 @@
 packages: []
 
+overrides:
+  'minimatch@>=7.0.0 <11.0.1': ^11.0.1
+  'tmp@<0.2.6': ^0.2.6
+  'undici@<6.29.1': ^6.29.1
+  '@browserbasehq/stagehand': ^4.4.0
+
 allowBuilds:
   '@google/genai': true
   '@prisma/engines': true
