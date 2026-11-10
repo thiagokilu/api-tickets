@@ -125,9 +125,9 @@ jobs:
           --health-retries 10
 
     env:
-      DATABASE_URL: postgresql://api_tickets:api_tickets@localhost:5432/api_tickets
-      REDIS_URL: redis://localhost:6379
-      JWT_SECRET: ci-test-secret-only-not-for-production-123456
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      REDIS_URL: ${{ secrets.REDIS_URL }}
       NODE_ENV: test
       NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
       OBSERVE_APP_KEY: ${{ secrets.OBSERVE_APP_KEY }}
