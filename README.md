@@ -23,6 +23,30 @@ API REST para gerenciamento de tickets de suporte, desenvolvida com foco em orga
 - 📋 Consulta do histórico de alterações.
 - 🔎 Listagem e filtragem por status, prioridade e categoria.
 - 🛡️ Controle de acesso conforme as permissões dos usuários.
+- 🤖 Chat com IA usando o histórico enviado pelo cliente e o contexto de tickets.
+
+## 🤖 Chat com IA
+
+As rotas HTTP do chat exigem autenticação JWT. O endpoint `POST /chat` retorna a resposta completa; `POST /chat/stream` transmite a resposta em eventos SSE. O WebSocket usa o namespace `/chat` e recebe mensagens pelo evento `sendMessage`.
+
+Para a IA continuar uma conversa, envie as mensagens anteriores em `history` junto com cada nova mensagem. O servidor não armazena o histórico do chat: o cliente deve reenviá-lo em ordem cronológica. Use `role: "user"` para mensagens da pessoa e `role: "model"` para respostas anteriores da IA. A mensagem atual vai no campo `message` e não deve ser repetida em `history`.
+
+Exemplo de corpo para `POST /chat` (o mesmo formato vale para `/chat/stream` e para o payload do evento WebSocket `sendMessage`):
+
+```json
+{
+  "history": [
+    { "role": "user", "text": "Meu login não funciona." },
+    { "role": "model", "text": "O que acontece quando você tenta entrar?" },
+    { "role": "user", "text": "Aparece uma mensagem de senha incorreta." },
+    { "role": "model", "text": "Você já tentou redefinir a senha?" }
+  ],
+  "message": "Ainda não. Como faço isso?",
+  "ticketId": "<UUID-do-ticket-opcional>"
+}
+```
+
+`history` é opcional e pode ser omitido na primeira mensagem. `ticketId` também é opcional; quando informado, a IA recebe o contexto daquele ticket, respeitando as permissões do usuário. Sem `ticketId`, o contexto inclui tickets abertos ou em andamento que o usuário pode consultar.
 
 ## 🚀 Como executar o projeto
 
