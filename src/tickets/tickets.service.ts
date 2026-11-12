@@ -35,6 +35,14 @@ export class TicketsService {
     const include = TICKET_INCLUDE;
 
     const ticket = await this.prisma.$transaction(async (tx) => {
+      // Ensure ticket creation always has a valid category, including on fresh databases.
+      const defaultCategory = await tx.category.upsert({
+        where: { name: 'Geral' },
+        create: { name: 'Geral', description: 'Categoria padrão' },
+        update: {},
+        select: { id: true },
+      });
+
       const ticket = await tx.tickets.create({
         data: {
           title: createTicketDto.title,
@@ -42,7 +50,7 @@ export class TicketsService {
           status: TicketStatus.OPEN,
           priority: TicketPriority.MEDIUM,
           requester_id: userId,
-          category_id: createTicketDto.category_id,
+          category_id: defaultCategory.id,
           client_files: [],
         },
         include,
