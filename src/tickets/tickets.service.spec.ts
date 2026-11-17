@@ -25,6 +25,9 @@ describe('TicketsService', () => {
       findMany: vi.fn(),
       create: vi.fn(),
     },
+    category: {
+      upsert: vi.fn().mockResolvedValue({ id: 1 }),
+    },
     user: {
       findUnique: vi.fn(),
     },
@@ -72,7 +75,7 @@ describe('TicketsService', () => {
         status: 'OPEN',
         priority: 'MEDIUM',
         requester_id: 'user1',
-        category_id: null,
+        category_id: 1,
       };
 
       mockPrismaService.tickets.create.mockResolvedValue(ticket);
@@ -95,7 +98,7 @@ describe('TicketsService', () => {
             status: 'OPEN',
             priority: 'MEDIUM',
             requester_id: 'user1',
-            category_id: undefined,
+            category_id: 1,
             client_files: [],
           },
         }),

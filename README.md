@@ -121,6 +121,7 @@ pnpm test
 Execute os testes end-to-end:
 
 ```bash
+docker compose up -d postgres redis
 pnpm test:e2e
 ```
 
