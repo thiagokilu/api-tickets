@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ChatGateway } from './chat.gateway.js';
-import { ChatService } from './chat.service.js';
+import { AiChatGateway } from './ai-chat.gateway.js';
+import { AiChatService } from './ai-chat.service.js';
 import { PrismaService } from '../services/prisma.js';
 import { RedisService } from '../services/redis.js';
 import { vi } from 'vitest';
 import { Server, Socket } from 'socket.io';
 
-describe('ChatGateway', () => {
-  let gateway: ChatGateway;
-  let chatService: ChatService;
+describe('AiChatGateway', () => {
+  let gateway: AiChatGateway;
+  let chatService: AiChatService;
   let prismaService: PrismaService;
   let redisService: RedisService;
 
@@ -26,7 +26,7 @@ describe('ChatGateway', () => {
     disconnect: vi.fn(),
   } as unknown as Socket;
 
-  const mockChatService = {
+  const mockAiChatService = {
     streamChunks: vi.fn(),
   };
 
@@ -45,10 +45,10 @@ describe('ChatGateway', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        ChatGateway,
+        AiChatGateway,
         {
-          provide: ChatService,
-          useValue: mockChatService,
+          provide: AiChatService,
+          useValue: mockAiChatService,
         },
         {
           provide: PrismaService,
@@ -61,8 +61,8 @@ describe('ChatGateway', () => {
       ],
     }).compile();
 
-    gateway = module.get<ChatGateway>(ChatGateway);
-    chatService = module.get<ChatService>(ChatService);
+    gateway = module.get<AiChatGateway>(AiChatGateway);
+    chatService = module.get<AiChatService>(AiChatService);
     prismaService = module.get<PrismaService>(PrismaService);
     redisService = module.get<RedisService>(RedisService);
 
@@ -161,7 +161,7 @@ describe('ChatGateway', () => {
         yield 'chunk2';
       }
 
-      mockChatService.streamChunks.mockReturnValue(mockStream());
+      mockAiChatService.streamChunks.mockReturnValue(mockStream());
 
       await gateway.handleMessage(dto, mockClient);
 
@@ -175,7 +175,7 @@ describe('ChatGateway', () => {
       (mockClient as any).userId = 'user-123';
       (mockClient as any).role = 'CLIENT';
 
-      mockChatService.streamChunks.mockImplementation(() => {
+      mockAiChatService.streamChunks.mockImplementation(() => {
         throw new Error('Stream error');
       });
 

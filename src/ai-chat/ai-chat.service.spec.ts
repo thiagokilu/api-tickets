@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
-import { ChatService } from './chat.service.js';
+import { AiChatService } from './ai-chat.service.js';
 import { PrismaService } from '../services/prisma.js';
 import { vi } from 'vitest';
 import { ChatOpenAI } from '@langchain/openai';
 
 vi.mock('@langchain/openai');
 
-describe('ChatService', () => {
-  let service: ChatService;
+describe('AiChatService', () => {
+  let service: AiChatService;
   let configService: ConfigService;
   let prismaService: PrismaService;
 
@@ -31,7 +31,7 @@ describe('ChatService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        ChatService,
+        AiChatService,
         {
           provide: ConfigService,
           useValue: mockConfigService,
@@ -43,7 +43,7 @@ describe('ChatService', () => {
       ],
     }).compile();
 
-    service = module.get<ChatService>(ChatService);
+    service = module.get<AiChatService>(AiChatService);
     configService = module.get<ConfigService>(ConfigService);
     prismaService = module.get<PrismaService>(PrismaService);
 

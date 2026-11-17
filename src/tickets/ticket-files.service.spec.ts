@@ -179,4 +179,5 @@ describe('TicketFilesService', () => {
       service.getTicketFile(ticket.id, 'missing.pdf', 'client-1', Role.CLIENT),
     ).rejects.toBeInstanceOf(NotFoundException);
   });
+
 });

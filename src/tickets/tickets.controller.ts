@@ -17,7 +17,6 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
-import { resolve } from 'node:path';
 import { TicketsService } from './tickets.service.js';
 import { TicketHistoryService } from './ticket-history.service.js';
 import { TicketMessagesService } from './ticket-messages.service.js';
@@ -113,6 +112,15 @@ export class TicketsController {
     );
   }
 
+  @Get(':id/files')
+  listFiles(@Param('id') id: string, @Request() req: any) {
+    return this.ticketFilesService.listTicketFiles(
+      id,
+      req.user.userId,
+      req.user.role,
+    );
+  }
+
   @Get(':id/files/:filename')
   async downloadFile(
     @Param('id') id: string,
@@ -120,13 +128,14 @@ export class TicketsController {
     @Request() req: any,
     @Res() res: Response,
   ) {
-    const storedFilename = await this.ticketFilesService.getTicketFile(
+    const file = await this.ticketFilesService.downloadTicketFile(
       id,
       filename,
       req.user.userId,
       req.user.role,
     );
-    return res.sendFile(resolve(process.cwd(), 'uploads', storedFilename));
+    res.type(file.contentType);
+    return res.send(file.body);
   }
 
   @Get(':id/messages')

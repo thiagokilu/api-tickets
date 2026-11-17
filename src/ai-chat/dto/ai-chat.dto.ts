@@ -2,7 +2,7 @@ import { IsArray, IsNotEmpty, IsOptional, IsString, IsUUID, ValidateNested } fro
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-export class ChatMessageDto {
+export class AiChatMessageDto {
   @ApiProperty({
     enum: ['user', 'model'],
     description: 'Autor da mensagem: usuário ou resposta anterior da IA.',
@@ -18,9 +18,9 @@ export class ChatMessageDto {
   text: string;
 }
 
-export class SendMessageDto {
+export class SendAiAiChatMessageDto {
   @ApiPropertyOptional({
-    type: [ChatMessageDto],
+    type: [AiChatMessageDto],
     description: 'Mensagens anteriores em ordem cronológica. Reenvie o histórico a cada chamada para a IA continuar a conversa. A mensagem atual deve ser enviada em `message`, não repetida aqui.',
     example: [
       { role: 'user', text: 'Meu login não funciona.' },
@@ -30,8 +30,8 @@ export class SendMessageDto {
   @IsArray()
   @IsOptional()
   @ValidateNested({ each: true })
-  @Type(() => ChatMessageDto)
-  history?: ChatMessageDto[] = [];
+  @Type(() => AiChatMessageDto)
+  history?: AiChatMessageDto[] = [];
 
   @ApiProperty({ example: 'Aparece uma mensagem de senha incorreta.' })
   @IsString()

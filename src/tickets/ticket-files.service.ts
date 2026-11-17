@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { mkdir, writeFile, unlink } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { ConfigService } from '@nestjs/config';
+import { DeleteObjectCommand, GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { randomUUID } from 'node:crypto';
 import { PrismaService } from '../services/prisma.js';
 import { Role } from '../generated/prisma/enums.js';
@@ -10,10 +10,25 @@ import { fileTypeFromBuffer } from 'file-type';
 
 @Injectable()
 export class TicketFilesService {
+  private readonly s3: S3Client;
+  private readonly bucket: string;
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly ticketAccess: TicketAccessService,
-  ) {}
+    config: ConfigService,
+  ) {
+    this.bucket = config.getOrThrow<string>('S3_BUCKET');
+    this.s3 = new S3Client({
+      endpoint: config.getOrThrow<string>('S3_ENDPOINT'),
+      region: config.getOrThrow<string>('S3_REGION'),
+      forcePathStyle: true,
+      credentials: {
+        accessKeyId: config.getOrThrow<string>('S3_ACCESS_KEY_ID'),
+        secretAccessKey: config.getOrThrow<string>('S3_SECRET_ACCESS_KEY'),
+      },
+    });
+  }
 
   private async validateFileContent(buffer: Buffer, declaredMimetype: string): Promise<boolean> {
     const detectedType = await fileTypeFromBuffer(buffer);
@@ -70,10 +85,13 @@ export class TicketFilesService {
     }
 
     const filename = `${randomUUID()}${extension}`;
-    const uploadDirectory = resolve(process.cwd(), 'uploads');
-    const filePath = resolve(uploadDirectory, filename);
-    await mkdir(uploadDirectory, { recursive: true });
-    await writeFile(filePath, file.buffer, { flag: 'wx' });
+    const key = this.objectKey(ticketId, filename);
+    await this.s3.send(new PutObjectCommand({
+      Bucket: this.bucket,
+      Key: key,
+      Body: file.buffer,
+      ContentType: file.mimetype,
+    }));
 
     try {
       return await this.prisma.$transaction(async (tx) => {
@@ -101,7 +119,7 @@ export class TicketFilesService {
         };
       });
     } catch (error) {
-      await unlink(filePath).catch(() => undefined);
+      await this.s3.send(new DeleteObjectCommand({ Bucket: this.bucket, Key: key })).catch(() => undefined);
       throw error;
     }
   }
@@ -119,4 +137,30 @@ export class TicketFilesService {
       throw new NotFoundException('File not found');
     }
     return filename;
-  }}
+  }
+
+  async listTicketFiles(ticketId: string, userId: string, userRole: Role) {
+    const ticket = await this.prisma.tickets.findUnique({ where: { id: ticketId } });
+    if (!ticket) throw new NotFoundException('Ticket not found');
+    this.ticketAccess.assertCanAccessFiles(ticket, userId, userRole);
+
+    return ticket.client_files;
+  }
+
+  async downloadTicketFile(ticketId: string, filename: string, userId: string, userRole: Role) {
+    await this.getTicketFile(ticketId, filename, userId, userRole);
+    const result = await this.s3.send(new GetObjectCommand({
+      Bucket: this.bucket,
+      Key: this.objectKey(ticketId, filename),
+    }));
+    if (!result.Body) throw new NotFoundException('File not found');
+    return {
+      body: Buffer.from(await result.Body.transformToByteArray()),
+      contentType: result.ContentType ?? 'application/octet-stream',
+    };
+  }
+
+  private objectKey(ticketId: string, filename: string) {
+    return `tickets/${ticketId}/${filename}`;
+  }
+}

@@ -24,7 +24,11 @@ describe('TicketsController', () => {
     updateMessage: vi.fn(),
     deleteMessage: vi.fn(),
   };
-  const mockTicketFilesService = { uploadFile: vi.fn(), getTicketFile: vi.fn() };
+  const mockTicketFilesService = {
+    uploadFile: vi.fn(),
+    listTicketFiles: vi.fn(),
+    getTicketFile: vi.fn(),
+  };
 
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -167,6 +171,23 @@ describe('TicketsController', () => {
         BadRequestException,
       );
       expect(mockTicketFilesService.uploadFile).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('listFiles', () => {
+    it('should list files attached to a ticket for the authenticated user', async () => {
+      const req = { user: { userId: 'client1', role: 'CLIENT' } };
+      const expectedResult = ['document.pdf'];
+      mockTicketFilesService.listTicketFiles.mockResolvedValue(expectedResult);
+
+      await expect(controller.listFiles('ticket1', req)).resolves.toEqual(
+        expectedResult,
+      );
+      expect(mockTicketFilesService.listTicketFiles).toHaveBeenCalledWith(
+        'ticket1',
+        'client1',
+        'CLIENT',
+      );
     });
   });
 });

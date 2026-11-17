@@ -48,6 +48,12 @@ Exemplo de corpo para `POST /chat` (o mesmo formato vale para `/chat/stream` e p
 
 `history` é opcional e pode ser omitido na primeira mensagem. `ticketId` também é opcional; quando informado, a IA recebe o contexto daquele ticket, respeitando as permissões do usuário. Sem `ticketId`, o contexto inclui tickets abertos ou em andamento que o usuário pode consultar.
 
+## Chat do ticket
+
+O chat associado a um ticket é uma conversa comum entre o solicitante e o atendente atribuído. As mensagens são armazenadas no histórico do ticket e exigem autenticação JWT. Use `GET /ticket-chat/{ticketId}/messages` para listar a conversa e `POST /ticket-chat/{ticketId}/messages` para enviar uma mensagem com o corpo `{ "message": "Texto da mensagem" }`. Administradores também podem acessar qualquer chat; agentes só acessam tickets atribuídos a eles e clientes, os próprios tickets.
+
+O chat também está disponível em tempo real pelo Socket.IO no namespace `/ticket-chat`. Envie o JWT em `auth: { token }` (ou no header `Authorization: Bearer <token>`). Emita `joinTicket` com `{ "ticketId": "<UUID>" }` para entrar na sala autorizada e `sendMessage` com `{ "ticketId": "<UUID>", "message": "Texto da mensagem" }` para gravar e transmitir uma mensagem. O servidor confirma a entrada com `joinedTicket` e publica mensagens persistidas em `newMessage` para todos na sala, incluindo o remetente. Erros de autorização ou validação são enviados no evento `error`.
+
 ## 🚀 Como executar o projeto
 
 ### Pré-requisitos

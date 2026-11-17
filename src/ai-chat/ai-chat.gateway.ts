@@ -9,8 +9,8 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Logger, UsePipes, ValidationPipe, UnauthorizedException } from '@nestjs/common';
-import { ChatService } from './chat.service.js';
-import { SendMessageDto } from './dto/chat-dto.js';
+import { AiChatService } from './ai-chat.service.js';
+import { SendAiAiChatMessageDto } from './dto/ai-chat.dto.js';
 import { getAllowedOrigins } from '../config/cors.js';
 import { Server, Socket } from 'socket.io';
 import { PrismaService } from '../services/prisma.js';
@@ -29,16 +29,16 @@ interface ChatSocket extends Socket {
     credentials: true,
   },
 })
-export class ChatGateway
+export class AiChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer()
   server: Server;
 
-  private readonly logger = new Logger(ChatGateway.name);
+  private readonly logger = new Logger(AiChatGateway.name);
 
   constructor(
-    private readonly chatService: ChatService,
+    private readonly chatService: AiChatService,
     private readonly prisma: PrismaService,
     private readonly redisService: RedisService,
   ) {}
@@ -97,7 +97,7 @@ export class ChatGateway
   @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
   @SubscribeMessage('sendMessage')
   async handleMessage(
-    @MessageBody() dto: SendMessageDto,
+    @MessageBody() dto: SendAiAiChatMessageDto,
     @ConnectedSocket() client: ChatSocket,
   ): Promise<void> {
     if (!client.userId || !client.role) {

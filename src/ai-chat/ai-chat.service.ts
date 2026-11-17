@@ -6,7 +6,7 @@ import {
   SystemMessage,
   AIMessage,
 } from '@langchain/core/messages';
-import { SendMessageDto } from './dto/chat-dto.js';
+import { SendAiAiChatMessageDto } from './dto/ai-chat.dto.js';
 import { Observable } from 'rxjs';
 import { PrismaService } from '../services/prisma.js';
 import { readFileSync } from 'fs';
@@ -14,9 +14,9 @@ import { join } from 'path';
 import {MarkdownTextSplitter} from   '@langchain/textsplitters';
 
 @Injectable()
-export class ChatService {
+export class AiChatService {
   private readonly langchainAi: ChatOpenAI;
-  private readonly logger = new Logger(ChatService.name);
+  private readonly logger = new Logger(AiChatService.name);
 
   constructor(
     private readonly configService: ConfigService,
@@ -99,7 +99,7 @@ export class ChatService {
     }
   }
 
-  private async buildMessages(dto: SendMessageDto, userId: string, role: string) {
+  private async buildMessages(dto: SendAiAiChatMessageDto, userId: string, role: string) {
     const ticketsContext = await this.getTicketsContext(userId, role, dto.ticketId);
     const supportGuide = await this.getSupportGuideContent();
     const messages: (SystemMessage | HumanMessage | AIMessage)[] = [
@@ -122,7 +122,7 @@ export class ChatService {
     return messages;
   }
 
-  async sendMessage(dto: SendMessageDto, userId: string, role: string): Promise<string> {
+  async sendMessage(dto: SendAiAiChatMessageDto, userId: string, role: string): Promise<string> {
     this.logger.log(
       `Mensagem recebida para resposta completa (${this.describeRequest(dto)})`,
     );
@@ -142,7 +142,7 @@ export class ChatService {
     }
   }
 
-  async *streamChunks(dto: SendMessageDto, userId: string, role: string): AsyncGenerator<string> {
+  async *streamChunks(dto: SendAiAiChatMessageDto, userId: string, role: string): AsyncGenerator<string> {
     this.logger.log(
       `Mensagem recebida para streaming (${this.describeRequest(dto)})`,
     );
@@ -176,7 +176,7 @@ export class ChatService {
     }
   }
 
-  sendMessageStream(dto: SendMessageDto, userId: string, role: string): Observable<MessageEvent> {
+  sendMessageStream(dto: SendAiAiChatMessageDto, userId: string, role: string): Observable<MessageEvent> {
     this.logger.log('Preparando resposta SSE para a mensagem recebida');
 
     return new Observable((subscriber) => {
@@ -195,7 +195,7 @@ export class ChatService {
     });
   }
 
-  private describeRequest(dto: SendMessageDto): string {
+  private describeRequest(dto: SendAiAiChatMessageDto): string {
     const ticketContext = dto.ticketId ? `, ticket ${dto.ticketId}` : '';
     return `${dto.message.length} caracteres, ${dto.history?.length ?? 0} mensagens no histórico${ticketContext}`;
   }

@@ -6,11 +6,12 @@ import { TicketsModule } from './tickets/tickets.module.js';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { validateEnv } from './config/env/env.js';
-import { ChatModule } from './chat/chat.module.js';
+import { AiChatModule } from './ai-chat/ai-chat.module.js';
 import { RagModule } from './rag/rag.module.js';
 import { RedisModule } from './services/redis.js';
 import { ObserveModule } from './observe.js';
 import { CategoriesModule } from './categories/categories.module.js';
+import { TicketChatModule } from './ticket-chat/ticket-chat.module.js';
 
 const env = validateEnv(process.env);
 
@@ -43,7 +44,8 @@ const env = validateEnv(process.env);
         limit: 100,
       },
     ]),
-    ChatModule,
+    AiChatModule,
+    TicketChatModule,
     RagModule,
   ],
   controllers: [AppController],

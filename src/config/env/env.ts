@@ -29,6 +29,12 @@ const envSchema = z.object({
 
   REDIS_URL: redisUrlSchema,
 
+  S3_ENDPOINT: z.string().url(),
+  S3_REGION: z.string().min(1),
+  S3_BUCKET: z.string().min(1),
+  S3_ACCESS_KEY_ID: z.string().min(1),
+  S3_SECRET_ACCESS_KEY: z.string().min(1),
+
   NVIDIA_API_KEY: z.string().min(1, 'NVIDIA_API_KEY é obrigatório'),
 
   NVIDIA_MODEL: z.string().min(1).default('nvidia/nemotron-3.5-bolt-e4b'),

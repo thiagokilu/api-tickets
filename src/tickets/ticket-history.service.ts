@@ -60,6 +60,22 @@ export class TicketHistoryService {
       });
     }
 
+    // CLIENT pode ver o histórico dos próprios tickets.
+    if (userRole === Role.CLIENT) {
+      if (ticket.requester_id !== userId) {
+        throw new ForbiddenException('You can only view history of your own tickets');
+      }
+      return this.prisma.ticketHistory.findMany({
+        where: { ticket_id: ticketId },
+        include: {
+          actor: {
+            select: { id: true, username: true, email: true, role: true },
+          },
+        },
+        orderBy: { created_at: 'asc' },
+      });
+    }
+
     throw new ForbiddenException('You are not authorized to view history');
   }
 
