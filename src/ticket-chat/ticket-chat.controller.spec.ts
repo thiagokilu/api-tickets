@@ -1,17 +1,22 @@
 import { Test } from '@nestjs/testing';
 import { vi } from 'vitest';
 import { TicketChatController } from './ticket-chat.controller.js';
+import { TicketChatGateway } from './ticket-chat.gateway.js';
 import { TicketChatService } from './ticket-chat.service.js';
 
 describe('TicketChat TicketChatController', () => {
   const service = { getMessages: vi.fn(), sendMessage: vi.fn() };
+  const gateway = { broadcastMessage: vi.fn() };
   let controller: TicketChatController;
 
   beforeEach(async () => {
     vi.clearAllMocks();
     const module = await Test.createTestingModule({
       controllers: [TicketChatController],
-      providers: [{ provide: TicketChatService, useValue: service }],
+      providers: [
+        { provide: TicketChatService, useValue: service },
+        { provide: TicketChatGateway, useValue: gateway },
+      ],
     }).compile();
     controller = module.get(TicketChatController);
   });
@@ -29,5 +34,6 @@ describe('TicketChat TicketChatController', () => {
     service.sendMessage.mockResolvedValue(message);
     await expect(controller.sendMessage('ticket-1', dto, { user: { userId: 'client-1', role: 'CLIENT' } })).resolves.toBe(message);
     expect(service.sendMessage).toHaveBeenCalledWith('ticket-1', dto, 'client-1', 'CLIENT');
+    expect(gateway.broadcastMessage).toHaveBeenCalledWith('ticket-1', message);
   });
 });
