@@ -1,6 +1,7 @@
 export const DEFAULT_ALLOWED_ORIGINS = [
   'http://localhost:3000',
   'http://localhost:5173',
+  'https://chamou-suporte.vercel.app',
 ];
 
 export function getAllowedOrigins(value = process.env.ALLOWED_ORIGINS) {

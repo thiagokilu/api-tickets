@@ -113,6 +113,16 @@ export class TicketChatGateway implements OnGatewayConnection, OnGatewayDisconne
     }
   }
 
+  async broadcastMessage(ticketId: string, message: unknown) {
+    try {
+      await this.broadcastToAuthorizedMembers(ticketId, message);
+    } catch (error) {
+      this.logger.warn(
+        `Falha ao transmitir mensagem do ticket ${ticketId}: ${error instanceof Error ? error.message : 'erro desconhecido'}`,
+      );
+    }
+  }
+
   private room(ticketId: string) {
     return `ticket:${ticketId}`;
   }
